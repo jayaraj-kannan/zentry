@@ -1,0 +1,14 @@
+# Ignore everything by default
+/*
+
+# Except the dist folder
+!/dist/
+
+# Except this .gitignore file
+!/.gitignore
+
+# Except the README if you want to keep it
+!/README.md
+
+# Un-ignore contents of dist
+!/dist/**
