@@ -1,0 +1,41 @@
+/* Additional Styles for QueueManager */
+.mb-4 { margin-bottom: 1rem; }
+.mt-2 { margin-top: 0.5rem; }
+
+.item-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.text-sm {
+  font-size: 0.8rem;
+}
+
+.preorder-btn {
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  box-shadow: 0 4px 10px var(--primary-glow);
+}
+.preorder-btn:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+}
+.preorder-btn.success {
+  background: var(--status-clear);
+  box-shadow: 0 4px 10px rgba(16, 185, 129, 0.4);
+  cursor: default;
+}
+.preorder-btn.success:hover {
+  transform: none;
+}

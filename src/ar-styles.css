@@ -1,0 +1,197 @@
+/* AR Navigation Mode Styles */
+.ar-nav-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--bg-darker);
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+}
+
+/* Simulate blurred camera background */
+.ar-camera-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle at 50% 50%, rgba(30, 41, 59, 0.4) 0%, rgba(2, 6, 23, 1) 100%);
+  z-index: -1;
+}
+
+.ar-header {
+  padding: 1.5rem 1rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: linear-gradient(180deg, rgba(2, 6, 23, 0.9) 0%, transparent 100%);
+}
+
+.dest-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(30, 41, 59, 0.8);
+  padding: 8px 16px;
+  border-radius: 20px;
+  border: 1px solid var(--card-border);
+  backdrop-filter: blur(8px);
+}
+
+.ar-close {
+  background: rgba(255, 255, 255, 0.1);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: #fff;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+.ar-close:hover {
+  background: rgba(239, 68, 68, 0.8);
+}
+
+.ar-center {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.ar-arrow {
+  margin-bottom: 2rem;
+  transition: transform 1s ease-in-out;
+  filter: drop-shadow(0 0 20px rgba(16, 185, 129, 0.6));
+  animation: floatArrow 2s infinite ease-in-out;
+}
+
+.ar-arrow.turn-right {
+  transform: rotate(45deg);
+}
+
+@keyframes floatArrow {
+  0% { transform: translateY(0); filter: drop-shadow(0 0 20px rgba(16, 185, 129, 0.6)); }
+  50% { transform: translateY(-15px); filter: drop-shadow(0 0 35px rgba(16, 185, 129, 0.9)); }
+  100% { transform: translateY(0); filter: drop-shadow(0 0 20px rgba(16, 185, 129, 0.6)); }
+}
+
+.ar-distance {
+  font-size: 4rem;
+  font-weight: 700;
+  letter-spacing: -2px;
+  line-height: 1;
+  text-shadow: 0 4px 20px rgba(0,0,0,0.8);
+}
+
+.ar-instruction {
+  font-size: 1.2rem;
+  color: var(--text-main);
+  background: rgba(0,0,0,0.5);
+  padding: 8px 24px;
+  border-radius: 20px;
+  margin-top: 1rem;
+  backdrop-filter: blur(5px);
+}
+
+.ar-arrived {
+  animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+@keyframes popIn {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
+}
+
+.success-pulse {
+  background: rgba(16, 185, 129, 0.2);
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0 auto 1.5rem auto;
+  box-shadow: 0 0 40px rgba(16, 185, 129, 0.3);
+}
+
+.ar-controls {
+  padding: 1.5rem;
+  background: linear-gradient(0deg, rgba(2, 6, 23, 0.95) 0%, transparent 100%);
+  display: flex;
+  justify-content: space-around;
+  gap: 1rem;
+}
+
+.ar-btn {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--card-border);
+  padding: 12px;
+  border-radius: 16px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.3s;
+  backdrop-filter: blur(10px);
+}
+
+.ar-btn span {
+  font-size: 0.85rem;
+  font-weight: 500;
+}
+
+.ar-btn.active {
+  background: rgba(59, 130, 246, 0.15);
+  border-color: var(--primary);
+  color: var(--primary);
+  box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
+}
+
+.feature-btn.active {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: var(--status-moderate);
+  color: var(--status-moderate);
+  box-shadow: 0 0 15px rgba(245, 158, 11, 0.2);
+}
+
+/* Utility to add action buttons inside status items */
+.action-btn-wrapper {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.nav-btn {
+  background: rgba(59, 130, 246, 0.2);
+  color: var(--primary);
+  border: 1px solid rgba(59, 130, 246, 0.4);
+  padding: 6px 10px;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+}
+
+.nav-btn:hover {
+  background: var(--primary);
+  color: #fff;
+}
