@@ -15,7 +15,7 @@ import './ar-styles.css';
 import './emergency-styles.css';
 import { useAuth } from './context/AuthContext';
 import { useStadium } from './context/StadiumContext';
-import { seedInitialData, simulateCrowdDynamics } from './firebase/stadiumService';
+import { seedInitialData, simulateCrowdDynamics, reportSosAlert } from './firebase/stadiumService';
 import AuthScreen from './components/AuthScreen';
 import { LogOut, Play, Square, Database } from 'lucide-react';
 
@@ -183,11 +183,18 @@ function App() {
     setShowSOSOptions(true);
   };
 
-  const submitUserSOS = (type) => {
+  const submitUserSOS = async (type) => {
     setSosReason(type);
     setSosState('dispatching');
     setShowSOSOptions(false);
     setCurrentAlert({ message: `SOS Received: ${type}. Locating you now...`, persistent: true });
+
+    // Report to Firestore for Cloud Function dispatching
+    try {
+      await reportSosAlert(user.uid, user.email, type);
+    } catch (error) {
+      console.error("Failed to sync SOS to cloud:", error);
+    }
 
     setTimeout(() => {
       setSosState('active');
@@ -223,6 +230,8 @@ function App() {
   };
 
   const handleNavigation = (dest) => {
+    // Tracking Google Maps Navigation Event
+    console.log(`[Analytics] User navigating to: ${dest}`);
     const searchQuery = encodeURIComponent(`M.A. Chidambaram Stadium ${dest}`);
     const url = `https://www.google.com/maps/search/?api=1&query=${searchQuery}`;
     window.open(url, '_blank');
@@ -279,30 +288,45 @@ function App() {
     <div className={`app-container ${theme === 'light' ? 'light-theme' : ''}`}>
       <header className="app-header">
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-          <span className="mdi mdi-zend pulse" style={{ fontSize: '28px', color: 'var(--primary)' }}></span>
+          <span className="mdi mdi-zend pulse" style={{ fontSize: '28px', color: 'var(--primary)' }} aria-hidden="true"></span>
           <h1 style={{ fontSize: '1.4rem', fontWeight: 'bold', margin: 0, letterSpacing: '0.5px' }}>Zentry</h1>
         </div>
         <div className="header-actions" style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
           <button
             onClick={toggleTheme}
             className="theme-toggle"
+            aria-label={`Switch to ${theme === 'dark' ? 'light' : 'dark'} mode`}
             style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '4px' }}
           >
-            {theme === 'dark' ? <Sun size={20} /> : <Moon size={20} />}
+            {theme === 'dark' ? <Sun size={20} aria-hidden="true" /> : <Moon size={20} aria-hidden="true" />}
           </button>
           <button
             className="settings-trigger"
             onClick={() => setShowAdminMenu(true)}
+            aria-label="Open Account and Admin Settings"
             style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '4px' }}
           >
-            <Settings size={20} />
+            <Settings size={20} aria-hidden="true" />
           </button>
         </div>
       </header>
 
       {showAdminMenu && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', zIndex: 1000, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setShowAdminMenu(false)}>
-          <div style={{ background: 'var(--bg-dark)', width: '100%', maxWidth: '420px', borderRadius: '30px 30px 0 0', padding: '2rem', borderTop: '1px solid var(--card-border)', boxShadow: '0 -10px 40px rgba(0,0,0,0.5)' }} onClick={e => e.stopPropagation()}>
+          <div 
+            style={{ 
+              background: 'var(--bg-dark)', 
+              width: '100%', 
+              maxWidth: '420px', 
+              borderRadius: '30px 30px 0 0', 
+              padding: '2rem', 
+              borderTop: '1px solid var(--card-border)', 
+              boxShadow: '0 -10px 40px rgba(0,0,0,0.5)',
+              maxHeight: '90vh',
+              overflowY: 'auto'
+            }} 
+            onClick={e => e.stopPropagation()}
+          >
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
               <div>
                 <h2 style={{ fontSize: '1.2rem', fontWeight: 'bold', color: 'var(--text-main)' }}>Account & Settings</h2>
@@ -311,7 +335,13 @@ function App() {
                   {role === 'admin' && <ShieldAlert size={12} color="var(--primary)" />}
                 </div>
               </div>
-              <button onClick={() => setShowAdminMenu(false)} style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}><X size={24} /></button>
+              <button 
+                onClick={() => setShowAdminMenu(false)} 
+                aria-label="Close settings"
+                style={{ background: 'none', border: 'none', color: 'var(--text-muted)', cursor: 'pointer' }}
+              >
+                <X size={24} aria-hidden="true" />
+              </button>
             </div>
 
             <div style={{ background: 'var(--surface-subtle)', borderRadius: '16px', padding: '1.2rem', marginBottom: '1.5rem', border: '1px solid var(--card-border)' }}>
@@ -712,9 +742,13 @@ function App() {
       </main>
 
       {!isEmergency && (
-        <div className="bottom-nav">
-          <button className={`nav-item ${activeTab === 'home' ? 'active' : ''}`} onClick={() => setActiveTab('home')}>
-            <Home size={22} />
+        <nav className="bottom-nav" aria-label="Main Navigation">
+          <button 
+            className={`nav-item ${activeTab === 'home' ? 'active' : ''}`} 
+            onClick={() => setActiveTab('home')}
+            aria-label="Home Dashboard"
+          >
+            <Home size={22} aria-hidden="true" />
             <span>Home</span>
           </button>
           {isCheckedIn && (
@@ -722,18 +756,23 @@ function App() {
               <button
                 className={`nav-item ${activeTab === 'sos' ? 'active' : ''}`}
                 onClick={handleSOS}
+                aria-label="Trigger Emergency SOS"
                 style={{ color: sosState !== 'idle' ? 'var(--status-congested)' : 'var(--text-muted)' }}
               >
-                <AlertOctagon size={24} className={sosState === 'dispatching' ? 'pulse' : ''} />
+                <AlertOctagon size={24} className={sosState === 'dispatching' ? 'pulse' : ''} aria-hidden="true" />
                 <span style={{ fontWeight: sosState !== 'idle' ? 'bold' : 'normal' }}>SOS</span>
               </button>
             </>
           )}
-          <button className={`nav-item ${activeTab === 'tickets' ? 'active' : ''}`} onClick={() => setActiveTab('tickets')}>
-            <Ticket size={22} />
+          <button 
+            className={`nav-item ${activeTab === 'tickets' ? 'active' : ''}`} 
+            onClick={() => setActiveTab('tickets')}
+            aria-label="Tickets and Check-in"
+          >
+            <Ticket size={22} aria-hidden="true" />
             <span>Tickets</span>
           </button>
-        </div>
+        </nav>
       )}
 
       {/* Floating AI Assistant Button */}

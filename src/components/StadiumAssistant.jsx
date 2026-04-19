@@ -190,8 +190,17 @@ const StadiumAssistant = ({ zones, stalls, parkingLots, onClose, onNavigate }) =
   };
 
   return (
-    <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(10px)', zIndex: 3000, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={onClose}>
-      <div style={{ background: 'var(--bg-dark)', width: '100%', maxWidth: '450px', height: '85vh', borderRadius: '30px 30px 0 0', display: 'flex', flexDirection: 'column', overflow: 'hidden', borderTop: '1px solid var(--card-border)', boxShadow: '0 -20px 50px rgba(0,0,0,0.5)' }} onClick={e => e.stopPropagation()}>
+    <div 
+      style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(10px)', zIndex: 3000, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} 
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label="Stadium AI Assistant Chat"
+    >
+      <div 
+        style={{ background: 'var(--bg-dark)', width: '100%', maxWidth: '450px', height: '85vh', borderRadius: '30px 30px 0 0', display: 'flex', flexDirection: 'column', overflow: 'hidden', borderTop: '1px solid var(--card-border)', boxShadow: '0 -20px 50px rgba(0,0,0,0.5)' }} 
+        onClick={e => e.stopPropagation()}
+      >
         {/* Header */}
         <div style={{ padding: '1.2rem', borderBottom: '1px solid var(--card-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: 'rgba(255,255,255,0.02)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -206,15 +215,27 @@ const StadiumAssistant = ({ zones, stalls, parkingLots, onClose, onNavigate }) =
               </div>
             </div>
           </div>
-          <button onClick={onClose} style={{ background: 'rgba(255,255,255,0.05)', border: 'none', padding: '10px', borderRadius: '12px', color: 'var(--text-muted)', cursor: 'pointer' }}><X size={20} /></button>
+          <button 
+            onClick={onClose} 
+            aria-label="Close Assistant"
+            style={{ background: 'rgba(255,255,255,0.05)', border: 'none', padding: '10px', borderRadius: '12px', color: 'var(--text-muted)', cursor: 'pointer' }}
+          >
+            <X size={20} aria-hidden="true" />
+          </button>
         </div>
 
         {/* Language Selector */}
-        <div style={{ display: 'flex', gap: '8px', padding: '0.8rem 1.2rem', background: 'rgba(0,0,0,0.2)' }}>
+        <div 
+          style={{ display: 'flex', gap: '8px', padding: '0.8rem 1.2rem', background: 'rgba(0,0,0,0.2)' }}
+          role="group"
+          aria-label="Select Chat Language"
+        >
           {['en', 'ta', 'hi'].map(lang => (
             <button
               key={lang}
               onClick={() => changeLanguage(lang)}
+              aria-label={`Switch to ${lang === 'en' ? 'English' : lang === 'ta' ? 'Tamil' : 'Hindi'}`}
+              aria-pressed={language === lang}
               style={{ padding: '6px 12px', fontSize: '0.75rem', borderRadius: '8px', border: '1px solid var(--card-border)', background: language === lang ? 'var(--primary)' : 'var(--surface-subtle)', color: language === lang ? 'var(--text-inverse)' : 'var(--text-main)', cursor: 'pointer', fontWeight: 'bold' }}
             >
               {lang === 'en' ? 'ENGLISH' : lang === 'ta' ? 'தமிழ்' : 'हिन्दी'}
@@ -223,7 +244,12 @@ const StadiumAssistant = ({ zones, stalls, parkingLots, onClose, onNavigate }) =
         </div>
 
         {/* Messages */}
-        <div style={{ flex: 1, overflowY: 'auto', padding: '1.5rem 1.2rem', display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
+        <div 
+          style={{ flex: 1, overflowY: 'auto', padding: '1.5rem 1.2rem', display: 'flex', flexDirection: 'column', gap: '1.2rem' }}
+          role="log"
+          aria-relevant="additions"
+          aria-live="polite"
+        >
           {messages.map(msg => (
             <div key={msg.id} style={{ alignSelf: msg.sender === 'user' ? 'flex-end' : 'flex-start', maxWidth: '85%' }}>
               <div style={{
@@ -292,15 +318,22 @@ const StadiumAssistant = ({ zones, stalls, parkingLots, onClose, onNavigate }) =
             </div>
           ))}
           {isTyping && (
-            <div style={{ alignSelf: 'flex-start', color: 'var(--text-muted)', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '8px', paddingLeft: '4px' }}>
-              <Activity size={14} className="pulse" /> {language === 'ta' ? "பதில் தயார் செய்யப்படுகிறது..." : language === 'hi' ? "एआई सोच रहा है..." : "AI is generating response..."}
+            <div 
+              style={{ alignSelf: 'flex-start', color: 'var(--text-muted)', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '8px', paddingLeft: '4px' }}
+              aria-live="polite"
+            >
+              <Activity size={14} className="pulse" aria-hidden="true" /> {language === 'ta' ? "பதில் தயார் செய்யப்படுகிறது..." : language === 'hi' ? "एआई सोच रहा है..." : "AI is generating response..."}
             </div>
           )}
           <div ref={chatEndRef} />
         </div>
 
         {/* Quick Chips */}
-        <div style={{ padding: '0 1.2rem 1rem 1.2rem', display: 'flex', gap: '8px', overflowX: 'auto', whiteSpace: 'nowrap', WebkitOverflowScrolling: 'touch' }}>
+        <div 
+          style={{ padding: '0 1.2rem 1rem 1.2rem', display: 'flex', gap: '8px', overflowX: 'auto', whiteSpace: 'nowrap', WebkitOverflowScrolling: 'touch' }}
+          role="group"
+          aria-label="Quick Questions"
+        >
           {[
             { label: 'Nearest Exit?', icon: <ShieldAlert size={14} /> },
             { label: 'Food queue?', icon: <Coffee size={14} /> },
@@ -310,9 +343,10 @@ const StadiumAssistant = ({ zones, stalls, parkingLots, onClose, onNavigate }) =
             <button
               key={chip.label}
               onClick={() => handleSend(chip.label)}
+              aria-label={`Ask: ${chip.label}`}
               style={{ padding: '8px 14px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '20px', color: 'var(--text-main)', fontSize: '0.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s' }}
             >
-              {chip.icon} {chip.label}
+              {React.cloneElement(chip.icon, { "aria-hidden": "true" })} {chip.label}
             </button>
           ))}
         </div>
@@ -326,13 +360,15 @@ const StadiumAssistant = ({ zones, stalls, parkingLots, onClose, onNavigate }) =
               onChange={(e) => setInputText(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSend()}
               placeholder="How can I help you?"
+              aria-label="Ask the stadium assistant"
               style={{ flex: 1, padding: '14px 18px', borderRadius: '16px', border: '1px solid var(--card-border)', background: 'var(--surface-inner)', color: 'var(--text-main)', fontSize: '1rem', outline: 'none' }}
             />
             <button
               onClick={() => handleSend()}
+              aria-label="Send message"
               style={{ padding: '14px', width: '54px', height: '54px', background: 'var(--primary)', color: '#fff', border: 'none', borderRadius: '16px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 15px rgba(59, 130, 246, 0.4)' }}
             >
-              <Send size={22} />
+              <Send size={22} aria-hidden="true" />
             </button>
           </div>
         </div>

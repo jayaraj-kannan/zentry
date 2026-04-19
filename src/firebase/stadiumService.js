@@ -67,3 +67,17 @@ export const simulateCrowdDynamics = async () => {
     await updateDoc(randomLot.ref, { occupancy: newOcc });
   }
 };
+
+/**
+ * Report a new SOS alert from the user
+ */
+export const reportSosAlert = async (userId, userEmail, reason) => {
+  const alertRef = doc(collection(db, 'sos_alerts'));
+  await setDoc(alertRef, {
+    userId,
+    userEmail,
+    reason,
+    timestamp: new Date().toISOString()
+  });
+  return alertRef.id;
+};

@@ -1,0 +1,58 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if the user is an admin
+    function isAdmin() {
+      return request.auth != null && 
+        get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'admin';
+    }
+
+    // Users collection rules
+    match /users/{userId} {
+      allow read: if request.auth != null && (request.auth.uid == userId || isAdmin());
+      allow create: if request.auth != null && request.auth.uid == userId;
+      allow update: if request.auth != null && (
+        (request.auth.uid == userId && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role']))
+        || isAdmin()
+      );
+    }
+    
+    // Stadium Data (Zones, Stalls, Parking)
+    match /zones/{id} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+    
+    match /stalls/{id} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+    
+    match /parking_lots/{id} {
+      allow read: if request.auth != null;
+      allow write: if isAdmin();
+    }
+
+    // NEW: SOS Alerts
+    // Authenticated users can create SOS alerts
+    match /sos_alerts/{alertId} {
+      allow create: if request.auth != null;
+      allow read: if request.auth != null && (resource.data.userId == request.auth.uid || isAdmin());
+    }
+
+    // NEW: Security Dispatch Logs
+    // Users can read logs related to their own SOS alerts
+    match /security_dispatch_logs/{logId} {
+      allow read: if request.auth != null && (resource.data.userId == request.auth.uid || isAdmin());
+      allow write: if false; // Only Cloud Functions (Server-side) should write here
+    }
+
+    // NEW: Global Stadium Status
+    match /stadium_status/{id} {
+      allow read: if request.auth != null;
+      allow write: if false; // Only Cloud Functions should aggregate stats
+    }
+  }
+}

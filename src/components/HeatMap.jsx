@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { memo } from 'react';
 import { MapPin } from 'lucide-react';
 
-const HeatMap = ({ zones, isEmergency, isPreCheckin, showSeatRoute, isExitPhase }) => {
+const HeatMap = memo(({ zones, isEmergency, isPreCheckin, showSeatRoute, isExitPhase }) => {
   const getColor = (level) => {
     switch (level) {
       case 'clear': return 'var(--status-clear)';
@@ -18,10 +18,19 @@ const HeatMap = ({ zones, isEmergency, isPreCheckin, showSeatRoute, isExitPhase 
   const EXIT_GATE_Y = 650;
 
   return (
-    <div className="heatmap-container">
+    <div 
+      className="heatmap-container" 
+      role="region" 
+      aria-label="Stadium Crowd Heatmap"
+    >
       <div className="stadium-graphic">
         {/* Simple Abstract Stadium Representation */}
-        <svg viewBox="0 0 800 800" className="stadium-svg">
+        <svg 
+          viewBox="0 0 800 800" 
+          className="stadium-svg"
+          aria-hidden="true"
+        >
+          <title>Stadium Map</title>
           {/* Venue Name Title */}
           <text x="400" y="40" textAnchor="middle" fill="rgba(255,255,255,0.4)" fontSize="18" fontWeight="bold" letterSpacing="2px">
             M.A. CHIDAMBARAM STADIUM
@@ -106,7 +115,7 @@ const HeatMap = ({ zones, isEmergency, isPreCheckin, showSeatRoute, isExitPhase 
       </div>
 
       {!isPreCheckin && !isExitPhase && (
-        <div className="legend">
+        <div className="legend" role="presentation">
           <div className="legend-item">
             <span className="dot clear"></span> Clear
           </div>
@@ -120,6 +129,6 @@ const HeatMap = ({ zones, isEmergency, isPreCheckin, showSeatRoute, isExitPhase 
       )}
     </div>
   );
-};
+});
 
 export default HeatMap;
