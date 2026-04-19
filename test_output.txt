@@ -1,0 +1,1122 @@
+
+> smart_crowd_management@0.0.0 test
+> vitest --run
+
+9:52:30 PM [vite] warning: `esbuild` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `oxc` instead.
+9:52:30 PM [vite] warning: `optimizeDeps.esbuildOptions` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `optimizeDeps.rolldownOptions` instead.
+Both esbuild and oxc options were set. oxc options will be used and esbuild options will be ignored. The following esbuild options were set: `{ jsx: 'automatic', jsxImportSource: undefined }`
+
+ RUN  v4.1.4 /Users/jayarajkannan/Learnings/antigravity/zentry
+
+(node:12286) Warning: `--localstorage-file` was provided without a valid path
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ❯ src/__tests__/App.test.jsx (5 tests | 5 failed) 4ms
+     × renders initial home screen with welcome message 2ms
+     × toggles theme between dark and light 0ms
+     × completes the full check-in flow 0ms
+     × manages SOS emergency state 0ms
+     × triggers admin emergency protocol 0ms
+ ❯ src/components/__tests__/AlertOverlay.test.jsx (4 tests | 2 failed) 81ms
+     ✓ renders nothing when alert is null 13ms
+     ✓ renders alert message when provided 14ms
+     × renders "🚨" icon for persistent alerts 6ms
+     × calls onClose when close icon is clicked 45ms
+ ✓ src/components/__tests__/ParkingManager.test.jsx (5 tests) 81ms
+ ❯ src/components/__tests__/QueueManager.test.jsx (4 tests | 2 failed) 115ms
+     × renders all categories of stalls 51ms
+     × identifies and displays the fastest food stall 6ms
+     ✓ handles pre-order state transitions 18ms
+     ✓ calls onNavigate when map icon is clicked 37ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 9 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/App.test.jsx > App Integration > renders initial home screen with welcome message
+ FAIL  src/__tests__/App.test.jsx > App Integration > toggles theme between dark and light
+ FAIL  src/__tests__/App.test.jsx > App Integration > completes the full check-in flow
+ FAIL  src/__tests__/App.test.jsx > App Integration > manages SOS emergency state
+ FAIL  src/__tests__/App.test.jsx > App Integration > triggers admin emergency protocol
+TypeError: localStorage.clear is not a function
+ ❯ src/__tests__/App.test.jsx:26:18
+     24|   beforeEach(() => {
+     25|     vi.clearAllMocks();
+     26|     localStorage.clear();
+       |                  ^
+     27|   });
+     28|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/9]⎯
+
+ FAIL  src/components/__tests__/AlertOverlay.test.jsx > AlertOverlay > renders "🚨" icon for persistent alerts
+TestingLibraryElementError: Unable to find an element with the text: 🚨. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"alert-overlay show"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"alert-content"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"alert-icon-wrapper"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33mclass[39m=[32m"lucide lucide-bell alert-icon"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"20"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"20"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M10.3 21a1.94 1.94 0 0 0 3.4 0"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"alert-text"[39m
+        [36m>[39m
+          [36m<h4[39m
+            [33mstyle[39m=[32m"margin: 0px; font-size: 0.9rem;"[39m
+          [36m>[39m
+            [0mSmart Alert[0m
+          [36m</h4>[39m
+          [36m<p[39m
+            [33mstyle[39m=[32m"margin: 0px; font-size: 0.85rem;"[39m
+          [36m>[39m
+            [0mEmergency![0m
+          [36m</p>[39m
+        [36m</div>[39m
+        [36m<button[39m
+          [33mclass[39m=[32m"close-btn"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33mclass[39m=[32m"lucide lucide-x "[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"18"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"18"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<path[39m
+              [33md[39m=[32m"M18 6 6 18"[39m
+            [36m/>[39m
+            [36m<path[39m
+              [33md[39m=[32m"m6 6 12 12"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+        [36m</button>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/components/__tests__/AlertOverlay.test.jsx:22:19
+     20|     render(<AlertOverlay alert={alert} onClose={vi.fn()} />);
+     21|
+     22|     expect(screen.getByText('🚨')).toBeInTheDocument();
+       |                   ^
+     23|   });
+     24|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/9]⎯
+
+ FAIL  src/components/__tests__/AlertOverlay.test.jsx > AlertOverlay > calls onClose when close icon is clicked
+AssertionError: expected "vi.fn()" to be called at least once
+ ❯ src/components/__tests__/AlertOverlay.test.jsx:34:21
+     32|     fireEvent.click(closeButton);
+     33|
+     34|     expect(onClose).toHaveBeenCalled();
+       |                     ^
+     35|   });
+     36| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/9]⎯
+
+ FAIL  src/components/__tests__/QueueManager.test.jsx > QueueManager > renders all categories of stalls
+TestingLibraryElementError: Found multiple elements with the text: Stall B
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<strong>[39m
+  [0mStall B[0m
+[36m</strong>[39m
+
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mstyle[39m=[32m"display: flex; align-items: center; gap: 6px;"[39m
+[36m>[39m
+  [0mStall B[0m
+  [36m<div[39m
+    [33mstyle[39m=[32m"display: flex; gap: 4px;"[39m
+  [36m>[39m
+    [36m<div[39m
+      [33mstyle[39m=[32m"width: 8px; height: 8px; border: 1px solid rgb(239, 68, 68); padding: 1px; display: flex; align-items: center; justify-content: center;"[39m
+      [33mtitle[39m=[32m"Non-Veg"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mstyle[39m=[32m"width: 4px; height: 4px; background: rgb(239, 68, 68); border-radius: 50%;"[39m
+      [36m/>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</span>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"queue-manager mt-4"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"card highlight-card mb-4"[39m
+        [33mstyle[39m=[32m"background: var(--card-bg); border-color: var(--card-border); box-shadow: 0 8px 32px rgba(0,0,0,0.1);"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"card-header highlight"[39m
+          [33mstyle[39m=[32m"color: var(--status-clear);"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33mclass[39m=[32m"lucide lucide-timer icon highlight-icon"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"20"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"20"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<line[39m
+              [33mx1[39m=[32m"10"[39m
+              [33mx2[39m=[32m"14"[39m
+              [33my1[39m=[32m"2"[39m
+              [33my2[39m=[32m"2"[39m
+            [36m/>[39m
+            [36m<line[39m
+              [33mx1[39m=[32m"12"[39m
+              [33mx2[39m=[32m"15"[39m
+              [33my1[39m=[32m"14"[39m
+              [33my2[39m=[32m"11"[39m
+            [36m/>[39m
+            [36m<circle[39m
+              [33mcx[39m=[32m"12"[39m
+              [33mcy[39m=[32m"14"[39m
+              [33mr[39m=[32m"8"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [36m<h3>[39m
+            [0mOptimization: Fastest Food[0m
+          [36m</h3>[39m
+        [36m</div>[39m
+        [36m<p[39m
+          [33mclass[39m=[32m"suggestion-text"[39m
+        [36m>[39m
+          [0mCraving a snack? Head to [0m
+          [36m<strong>[39m
+            [0mStall B[0m
+          [36m</strong>[39m
+          [0m. Wait time is currently only [0m
+          [36m<strong[39m
+            [33mstyle[39m=[32m"color: var(--status-clear);"[39m
+          [36m>[39m
+            [0m5[0m
+            [0m mins[0m
+          [36m</strong>[39m
+          [0m![0m
+        [36m</p>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"status-section"[39m
+      [36m>[39m
+        [36m<h3>[39m
+          [0mFood Counters[0m
+        [36m</h3>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"gate-list mt-2"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"status-item"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"item-info"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"item-name"[39m
+                [33mstyle[39m=[32m"display: flex; align-items: center; gap: 8px;"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"lucide lucide-utensils "[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"16"[39m
+                  [33mstroke[39m=[32m"var(--text-muted)"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"16"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M7 2v20"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [36m<div[39m
+                  [33mstyle[39m=[32m"display: flex; flex-direction: column;"[39m
+                [36m>[39m
+                  [36m<span[39m
+                    [33mstyle[39m=[32m"display: flex; align-items: center; gap: 6px;"[39m
+                  [36m>[39m
+                    [0mStall A[0m
+                    [36m<div[39m
+                      [33mstyle[39m=[32m"display: flex; gap: 4px;"[39m
+                    [36m>[39m
+                      [36m<div[39m
+                        [33mstyle[39m=[32m"width: 8px; height: 8px; border: 1px solid rgb(16, 185, 129); padding: 1px; display: flex; align-items: center; justify-content: center;"[39m
+                        [33mtitle[39m=[32m"Veg"[39m
+                      [36m>[39m
+                        [36m<div[39m
+                          [33mstyle[39m=[32m"width: 4px; height: 4px; background: rgb(16, 185, 129); border-radius: 50%;"[39m
+                        [36m/>[39m
+                      [36m</div>[39m
+                    [36m</div>[39m
+                  [36m</span>[39m
+                  [36m<span[39m
+                    [33mstyle[39m=[32m"font-size: 0.7rem; color: var(--text-muted); font-weight: normal;"[39m
+                  [36m>[39m
+                    [0mTea[0m
+                  [36m</span>[39m
+                [36m</div>[39m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"wait-time text-sm"[39m
+                [33mstyle[39m=[32m"color: var(--text-muted);"[39m
+              [36m>[39m
+                [0m10[0m
+                [0m min wait[0m
+              [36m</span>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"action-btn-wrapper"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"nav-btn"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"lucide lucide-map-pin "[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"14"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"14"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"[39m
+                  [36m/>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"12"[39m
+                    [33mcy[39m=[32m"10"[39m
+                    [33mr[39m=[32m"3"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</button>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"preorder-btn"[39m
+              [36m>[39m
+                [0mPre-Order[0m
+              [36m</button>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"status-item"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"item-info"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"item-name"[39m
+                [33mstyle[39m=[32m"display: flex; align-items: center; gap: 8px;"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"lucide lucide-utensils "[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"16"[39m
+                  [33mstroke[39m=[32m"var(--text-muted)"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"16"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M7 2v20"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [36m<div[39m
+                  [33mstyle[39m=[32m"display: flex; flex-direction: column;"[39m
+                [36m>[39m
+                  [36m<span[39m
+                    [33mstyle[39m=[32m"display: flex; align-items: center; gap: 6px;"[39m
+                  [36m>[39m
+                    [0mStall B[0m
+                    [36m<div[39m
+                      [33mstyle[39m=[32m"display: flex; gap: 4px;"[39m
+                    [36m>[39m
+                      [36m<div[39m
+                        [33mstyle[39m=[32m"width: 8px; height: 8px; border: 1px solid rgb(239, 68, 68); padding: 1px; display: flex; align-items: center; justify-content: center;"[39m
+                        [33mtitle[39m=[32m"Non-Veg"[39m
+                      [36m>[39m
+                        [36m<div[39m
+                          [33mstyle[39m=[32m"width: 4px; height: 4px; background: rgb(239, 68, 68); border-radius: 50%;"[39m
+                        [36m/>[39m
+                      [36m</div>[39m
+                    [36m</div>[39m
+                  [36m</span>[39m
+                  [36m<span[39m
+                    [33mstyle[39m=[32m"font-size: 0.7rem; color: var(--text-muted); font-weight: normal;"[39m
+                  [36m>[39m
+                    [0mChicken[0m
+                  [36m</span>[39m
+                [36m</div>[39m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"wait-time text-sm"[39m
+                [33mstyle[39m=[32m"color: var(--text-muted);"[39m
+              [36m>[39m
+                [0m5[0m
+                [0m min wait[0m
+              [36m</span>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"action-btn-wrapper"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"nav-btn"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"lucide lucide-map-pin "[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"14"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"14"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"[39m
+                  [36m/>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"12"[39m
+                    [33mcy[39m=[32m"10"[39m
+                    [33mr[39m=[32m"3"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</button>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"preorder-btn"[39m
+              [36m>[39m
+                [0mPre-Order[0m
+              [36m</button>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"status-section mt-4"[39m
+      [36m>[39m
+        [36m<h3>[39m
+          [0mWashroom Queues[0m
+        [36m</h3>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"gate-list mt-2"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"status-item"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"item-name"[39m
+              [33mstyle[39m=[32m"display: flex; align-items: center; gap: 8px;"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33mclass[39m=[32m"lucide lucide-droplets "[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"16"[39m
+                [33mstroke[39m=[32m"var(--text-muted)"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"16"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 6.75 7 5.3c-.29 1.45-1.14 2.84-2.29 3.76S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0mWashroom 1[0m
+            [36m</span>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"action-btn-wrapper"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"wait-time"[39m
+                [33mstyle[39m=[32m"color: var(--status-clear); font-weight: 600;"[39m
+              [36m>[39m
+                [0m2[0m
+                [0m min[0m
+              [36m</span>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"nav-btn"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"lucide lucide-map-pin "[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"14"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"14"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"[39m
+                  [36m/>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"12"[39m
+                    [33mcy[39m=[32m"10"[39m
+                    [33mr[39m=[32m"3"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</button>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"status-section mt-4"[39m
+      [36m>[39m
+        [36m<h3>[39m
+          [0mExit Queues[0m
+        [36m</h3>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"gate-list mt-2"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"status-item"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"item-name"[39m
+              [33mstyle[39m=[32m"display: flex; align-items: center; gap: 8px;"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33mclass[39m=[32m"lucide lucide-map-pin "[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"16"[39m
+                [33mstroke[39m=[32m"var(--text-muted)"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"16"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"[39m
+                [36m/>[39m
+                [36m<circle[39m
+                  [33mcx[39m=[32m"12"[39m
+                  [33mcy[39m=[32m"10"[39m
+                  [33mr[39m=[32m"3"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0mExit 1[0m
+            [36m</span>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"action-btn-wrapper"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"wait-time"[39m
+                [33mstyle[39m=[32m"color: var(--status-moderate); font-weight: 600;"[39m
+              [36m>[39m
+                [0m8[0m
+                [0m min[0m
+              [36m</span>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"nav-btn"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"lucide lucide-map-pin "[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"14"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"14"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"[39m
+                  [36m/>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"12"[39m
+                    [33mcy[39m=[32m"10"[39m
+                    [33mr[39m=[32m"3"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</button>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ getElementError node_modules/@testing-library/dom/dist/query-helpers.js:20:35
+ ❯ getMultipleElementsFoundError node_modules/@testing-library/dom/dist/query-helpers.js:23:10
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:55:13
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/components/__tests__/QueueManager.test.jsx:21:19
+     19|
+     20|     expect(screen.getByText('Stall A')).toBeInTheDocument();
+     21|     expect(screen.getByText('Stall B')).toBeInTheDocument();
+       |                   ^
+     22|     expect(screen.getByText('Washroom 1')).toBeInTheDocument();
+     23|     expect(screen.getByText('Exit 1')).toBeInTheDocument();
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/9]⎯
+
+ FAIL  src/components/__tests__/QueueManager.test.jsx > QueueManager > identifies and displays the fastest food stall
+TestingLibraryElementError: Found multiple elements with the text: /Stall B/
+
+Here are the matching elements:
+
+Ignored nodes: comments, script, style
+[36m<strong>[39m
+  [0mStall B[0m
+[36m</strong>[39m
+
+Ignored nodes: comments, script, style
+[36m<span[39m
+  [33mstyle[39m=[32m"display: flex; align-items: center; gap: 6px;"[39m
+[36m>[39m
+  [0mStall B[0m
+  [36m<div[39m
+    [33mstyle[39m=[32m"display: flex; gap: 4px;"[39m
+  [36m>[39m
+    [36m<div[39m
+      [33mstyle[39m=[32m"width: 8px; height: 8px; border: 1px solid rgb(239, 68, 68); padding: 1px; display: flex; align-items: center; justify-content: center;"[39m
+      [33mtitle[39m=[32m"Non-Veg"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mstyle[39m=[32m"width: 4px; height: 4px; background: rgb(239, 68, 68); border-radius: 50%;"[39m
+      [36m/>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</span>[39m
+
+(If this is intentional, then use the `*AllBy*` variant of the query (like `queryAllByText`, `getAllByText`, or `findAllByText`)).
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"queue-manager mt-4"[39m
+    [36m>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"card highlight-card mb-4"[39m
+        [33mstyle[39m=[32m"background: var(--card-bg); border-color: var(--card-border); box-shadow: 0 8px 32px rgba(0,0,0,0.1);"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"card-header highlight"[39m
+          [33mstyle[39m=[32m"color: var(--status-clear);"[39m
+        [36m>[39m
+          [36m<svg[39m
+            [33mclass[39m=[32m"lucide lucide-timer icon highlight-icon"[39m
+            [33mfill[39m=[32m"none"[39m
+            [33mheight[39m=[32m"20"[39m
+            [33mstroke[39m=[32m"currentColor"[39m
+            [33mstroke-linecap[39m=[32m"round"[39m
+            [33mstroke-linejoin[39m=[32m"round"[39m
+            [33mstroke-width[39m=[32m"2"[39m
+            [33mviewBox[39m=[32m"0 0 24 24"[39m
+            [33mwidth[39m=[32m"20"[39m
+            [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+          [36m>[39m
+            [36m<line[39m
+              [33mx1[39m=[32m"10"[39m
+              [33mx2[39m=[32m"14"[39m
+              [33my1[39m=[32m"2"[39m
+              [33my2[39m=[32m"2"[39m
+            [36m/>[39m
+            [36m<line[39m
+              [33mx1[39m=[32m"12"[39m
+              [33mx2[39m=[32m"15"[39m
+              [33my1[39m=[32m"14"[39m
+              [33my2[39m=[32m"11"[39m
+            [36m/>[39m
+            [36m<circle[39m
+              [33mcx[39m=[32m"12"[39m
+              [33mcy[39m=[32m"14"[39m
+              [33mr[39m=[32m"8"[39m
+            [36m/>[39m
+          [36m</svg>[39m
+          [36m<h3>[39m
+            [0mOptimization: Fastest Food[0m
+          [36m</h3>[39m
+        [36m</div>[39m
+        [36m<p[39m
+          [33mclass[39m=[32m"suggestion-text"[39m
+        [36m>[39m
+          [0mCraving a snack? Head to [0m
+          [36m<strong>[39m
+            [0mStall B[0m
+          [36m</strong>[39m
+          [0m. Wait time is currently only [0m
+          [36m<strong[39m
+            [33mstyle[39m=[32m"color: var(--status-clear);"[39m
+          [36m>[39m
+            [0m5[0m
+            [0m mins[0m
+          [36m</strong>[39m
+          [0m![0m
+        [36m</p>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"status-section"[39m
+      [36m>[39m
+        [36m<h3>[39m
+          [0mFood Counters[0m
+        [36m</h3>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"gate-list mt-2"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"status-item"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"item-info"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"item-name"[39m
+                [33mstyle[39m=[32m"display: flex; align-items: center; gap: 8px;"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"lucide lucide-utensils "[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"16"[39m
+                  [33mstroke[39m=[32m"var(--text-muted)"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"16"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M7 2v20"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [36m<div[39m
+                  [33mstyle[39m=[32m"display: flex; flex-direction: column;"[39m
+                [36m>[39m
+                  [36m<span[39m
+                    [33mstyle[39m=[32m"display: flex; align-items: center; gap: 6px;"[39m
+                  [36m>[39m
+                    [0mStall A[0m
+                    [36m<div[39m
+                      [33mstyle[39m=[32m"display: flex; gap: 4px;"[39m
+                    [36m>[39m
+                      [36m<div[39m
+                        [33mstyle[39m=[32m"width: 8px; height: 8px; border: 1px solid rgb(16, 185, 129); padding: 1px; display: flex; align-items: center; justify-content: center;"[39m
+                        [33mtitle[39m=[32m"Veg"[39m
+                      [36m>[39m
+                        [36m<div[39m
+                          [33mstyle[39m=[32m"width: 4px; height: 4px; background: rgb(16, 185, 129); border-radius: 50%;"[39m
+                        [36m/>[39m
+                      [36m</div>[39m
+                    [36m</div>[39m
+                  [36m</span>[39m
+                  [36m<span[39m
+                    [33mstyle[39m=[32m"font-size: 0.7rem; color: var(--text-muted); font-weight: normal;"[39m
+                  [36m>[39m
+                    [0mTea[0m
+                  [36m</span>[39m
+                [36m</div>[39m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"wait-time text-sm"[39m
+                [33mstyle[39m=[32m"color: var(--text-muted);"[39m
+              [36m>[39m
+                [0m10[0m
+                [0m min wait[0m
+              [36m</span>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"action-btn-wrapper"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"nav-btn"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"lucide lucide-map-pin "[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"14"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"14"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"[39m
+                  [36m/>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"12"[39m
+                    [33mcy[39m=[32m"10"[39m
+                    [33mr[39m=[32m"3"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</button>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"preorder-btn"[39m
+              [36m>[39m
+                [0mPre-Order[0m
+              [36m</button>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"status-item"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"item-info"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"item-name"[39m
+                [33mstyle[39m=[32m"display: flex; align-items: center; gap: 8px;"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"lucide lucide-utensils "[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"16"[39m
+                  [33mstroke[39m=[32m"var(--text-muted)"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"16"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M3 2v7c0 1.1.9 2 2 2h4a2 2 0 0 0 2-2V2"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M7 2v20"[39m
+                  [36m/>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M21 15V2v0a5 5 0 0 0-5 5v6c0 1.1.9 2 2 2h3Zm0 0v7"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+                [36m<div[39m
+                  [33mstyle[39m=[32m"display: flex; flex-direction: column;"[39m
+                [36m>[39m
+                  [36m<span[39m
+                    [33mstyle[39m=[32m"display: flex; align-items: center; gap: 6px;"[39m
+                  [36m>[39m
+                    [0mStall B[0m
+                    [36m<div[39m
+                      [33mstyle[39m=[32m"display: flex; gap: 4px;"[39m
+                    [36m>[39m
+                      [36m<div[39m
+                        [33mstyle[39m=[32m"width: 8px; height: 8px; border: 1px solid rgb(239, 68, 68); padding: 1px; display: flex; align-items: center; justify-content: center;"[39m
+                        [33mtitle[39m=[32m"Non-Veg"[39m
+                      [36m>[39m
+                        [36m<div[39m
+                          [33mstyle[39m=[32m"width: 4px; height: 4px; background: rgb(239, 68, 68); border-radius: 50%;"[39m
+                        [36m/>[39m
+                      [36m</div>[39m
+                    [36m</div>[39m
+                  [36m</span>[39m
+                  [36m<span[39m
+                    [33mstyle[39m=[32m"font-size: 0.7rem; color: var(--text-muted); font-weight: normal;"[39m
+                  [36m>[39m
+                    [0mChicken[0m
+                  [36m</span>[39m
+                [36m</div>[39m
+              [36m</span>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"wait-time text-sm"[39m
+                [33mstyle[39m=[32m"color: var(--text-muted);"[39m
+              [36m>[39m
+                [0m5[0m
+                [0m min wait[0m
+              [36m</span>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"action-btn-wrapper"[39m
+            [36m>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"nav-btn"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"lucide lucide-map-pin "[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"14"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"14"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"[39m
+                  [36m/>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"12"[39m
+                    [33mcy[39m=[32m"10"[39m
+                    [33mr[39m=[32m"3"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</button>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"preorder-btn"[39m
+              [36m>[39m
+                [0mPre-Order[0m
+              [36m</button>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"status-section mt-4"[39m
+      [36m>[39m
+        [36m<h3>[39m
+          [0mWashroom Queues[0m
+        [36m</h3>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"gate-list mt-2"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"status-item"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"item-name"[39m
+              [33mstyle[39m=[32m"display: flex; align-items: center; gap: 8px;"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33mclass[39m=[32m"lucide lucide-droplets "[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"16"[39m
+                [33mstroke[39m=[32m"var(--text-muted)"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"16"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 6.75 7 5.3c-.29 1.45-1.14 2.84-2.29 3.76S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z"[39m
+                [36m/>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0mWashroom 1[0m
+            [36m</span>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"action-btn-wrapper"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"wait-time"[39m
+                [33mstyle[39m=[32m"color: var(--status-clear); font-weight: 600;"[39m
+              [36m>[39m
+                [0m2[0m
+                [0m min[0m
+              [36m</span>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"nav-btn"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"lucide lucide-map-pin "[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"14"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"14"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"[39m
+                  [36m/>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"12"[39m
+                    [33mcy[39m=[32m"10"[39m
+                    [33mr[39m=[32m"3"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</button>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"status-section mt-4"[39m
+      [36m>[39m
+        [36m<h3>[39m
+          [0mExit Queues[0m
+        [36m</h3>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"gate-list mt-2"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"status-item"[39m
+          [36m>[39m
+            [36m<span[39m
+              [33mclass[39m=[32m"item-name"[39m
+              [33mstyle[39m=[32m"display: flex; align-items: center; gap: 8px;"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33mclass[39m=[32m"lucide lucide-map-pin "[39m
+                [33mfill[39m=[32m"none"[39m
+                [33mheight[39m=[32m"16"[39m
+                [33mstroke[39m=[32m"var(--text-muted)"[39m
+                [33mstroke-linecap[39m=[32m"round"[39m
+                [33mstroke-linejoin[39m=[32m"round"[39m
+                [33mstroke-width[39m=[32m"2"[39m
+                [33mviewBox[39m=[32m"0 0 24 24"[39m
+                [33mwidth[39m=[32m"16"[39m
+                [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+              [36m>[39m
+                [36m<path[39m
+                  [33md[39m=[32m"M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"[39m
+                [36m/>[39m
+                [36m<circle[39m
+                  [33mcx[39m=[32m"12"[39m
+                  [33mcy[39m=[32m"10"[39m
+                  [33mr[39m=[32m"3"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+              [0mExit 1[0m
+            [36m</span>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"action-btn-wrapper"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mclass[39m=[32m"wait-time"[39m
+                [33mstyle[39m=[32m"color: var(--status-moderate); font-weight: 600;"[39m
+              [36m>[39m
+                [0m8[0m
+                [0m min[0m
+              [36m</span>[39m
+              [36m<button[39m
+                [33mclass[39m=[32m"nav-btn"[39m
+              [36m>[39m
+                [36m<svg[39m
+                  [33mclass[39m=[32m"lucide lucide-map-pin "[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mheight[39m=[32m"14"[39m
+                  [33mstroke[39m=[32m"currentColor"[39m
+                  [33mstroke-linecap[39m=[32m"round"[39m
+                  [33mstroke-linejoin[39m=[32m"round"[39m
+                  [33mstroke-width[39m=[32m"2"[39m
+                  [33mviewBox[39m=[32m"0 0 24 24"[39m
+                  [33mwidth[39m=[32m"14"[39m
+                  [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+                [36m>[39m
+                  [36m<path[39m
+                    [33md[39m=[32m"M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"[39m
+                  [36m/>[39m
+                  [36m<circle[39m
+                    [33mcx[39m=[32m"12"[39m
+                    [33mcy[39m=[32m"10"[39m
+                    [33mr[39m=[32m"3"[39m
+                  [36m/>[39m
+                [36m</svg>[39m
+              [36m</button>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ getElementError node_modules/@testing-library/dom/dist/query-helpers.js:20:35
+ ❯ getMultipleElementsFoundError node_modules/@testing-library/dom/dist/query-helpers.js:23:10
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:55:13
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/components/__tests__/QueueManager.test.jsx:30:19
+     28|
+     29|     // Fastest food is Stall B (5 mins)
+     30|     expect(screen.getByText(/Stall B/)).toBeInTheDocument();
+       |                   ^
+     31|     expect(screen.getByText(/5 mins/)).toBeInTheDocument();
+     32|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[5/9]⎯
+
+
+ Test Files  3 failed | 1 passed (4)
+      Tests  9 failed | 9 passed (18)
+   Start at  21:52:30
+   Duration  714ms (transform 261ms, setup 174ms, import 508ms, tests 282ms, environment 1.28s)
+

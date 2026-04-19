@@ -1,0 +1,551 @@
+
+> smart_crowd_management@0.0.0 test
+> vitest --run
+
+9:53:20 PM [vite] warning: `esbuild` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `oxc` instead.
+9:53:20 PM [vite] warning: `optimizeDeps.esbuildOptions` option was specified by "vite:react-babel" plugin. This option is deprecated, please use `optimizeDeps.rolldownOptions` instead.
+Both esbuild and oxc options were set. oxc options will be used and esbuild options will be ignored. The following esbuild options were set: `{ jsx: 'automatic', jsxImportSource: undefined }`
+
+ RUN  v4.1.4 /Users/jayarajkannan/Learnings/antigravity/zentry
+
+ ❯ src/components/__tests__/AlertOverlay.test.jsx (4 tests | 1 failed) 72ms
+     ✓ renders nothing when alert is null 10ms
+     ✓ renders alert message when provided 14ms
+     ✓ renders Bell icon 2ms
+     × calls onClose when close icon is clicked 43ms
+ ✓ src/components/__tests__/ParkingManager.test.jsx (5 tests) 80ms
+ ✓ src/components/__tests__/QueueManager.test.jsx (4 tests) 103ms
+ ❯ src/__tests__/App.test.jsx (5 tests | 3 failed) 163ms
+     ✓ renders initial home screen with welcome message 52ms
+     × toggles theme between dark and light 51ms
+     ✓ completes the full check-in flow 22ms
+     × manages SOS emergency state 14ms
+     × triggers admin emergency protocol 24ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 4 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/__tests__/App.test.jsx > App Integration > toggles theme between dark and light
+AssertionError: expected undefined to be 'dark' // Object.is equality
+
+- Expected:
+"dark"
+
++ Received:
+undefined
+
+ ❯ src/__tests__/App.test.jsx:43:50
+     41|
+     42|     // Default is dark
+     43|     expect(localStorage.getItem('zentry-theme')).toBe('dark');
+       |                                                  ^
+     44|
+     45|     fireEvent.click(themeButton);
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/4]⎯
+
+ FAIL  src/__tests__/App.test.jsx > App Integration > manages SOS emergency state
+TestingLibraryElementError: Unable to find an element with the text: SOS. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"app-container "[39m
+    [36m>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"app-header"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mstyle[39m=[32m"display: flex; align-items: center; gap: 10px;"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"mdi mdi-zend pulse"[39m
+            [33mstyle[39m=[32m"font-size: 28px; color: var(--primary);"[39m
+          [36m/>[39m
+          [36m<h1[39m
+            [33mstyle[39m=[32m"font-size: 1.4rem; font-weight: bold; margin: 0px; letter-spacing: 0.5px;"[39m
+          [36m>[39m
+            [0mZentry[0m
+          [36m</h1>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"header-actions"[39m
+          [33mstyle[39m=[32m"display: flex; align-items: center; gap: 16px;"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"theme-toggle"[39m
+            [33mstyle[39m=[32m"background: transparent; border: medium; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; padding: 4px;"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33mclass[39m=[32m"lucide lucide-sun "[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"20"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"20"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<circle[39m
+                [33mcx[39m=[32m"12"[39m
+                [33mcy[39m=[32m"12"[39m
+                [33mr[39m=[32m"4"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 2v2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 20v2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m4.93 4.93 1.41 1.41"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m17.66 17.66 1.41 1.41"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M2 12h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M20 12h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m6.34 17.66-1.41 1.41"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m19.07 4.93-1.41 1.41"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"settings-trigger"[39m
+            [33mstyle[39m=[32m"background: transparent; border: medium; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; padding: 4px;"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33mclass[39m=[32m"lucide lucide-settings "[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"20"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"20"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"[39m
+              [36m/>[39m
+              [36m<circle[39m
+                [33mcx[39m=[32m"12"[39m
+                [33mcy[39m=[32m"12"[39m
+                [33mr[39m=[32m"3"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</header>[39m
+      [36m<main[39m
+        [33mclass[39m=[32m"content"[39m
+      [36m>[39m
+        [36m<section[39m
+          [33mclass[39m=[32m"dashboard-section"[39m
+          [33mstyle[39m=[32m"padding: 1rem; height: 100%; overflow-y: auto;"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"ticket-wrapper "[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"ticket-inner"[39m
+            [36m>[39m
+              [36m<div[39m
+                [33mclass[39m=[32m"ticket-divider"[39m
+              [36m/>[39m
+              [36m<div[39m
+                [33mstyle[39m=[32m"display: flex; flex-direction: column; gap: 1rem; justify-content: center;"[39m
+              [36m>[39m
+                [36m<div[39m
+                  [33mstyle[39m=[32m"position: relative;"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mstyle[39m=[32m"background: rgba(59, 130, 246, 0.2); color: var(--primary); padding: 2px 8px; border-radius: 6px; font-size: 0.65rem; font-weight: bold; width: fit-content; margin-bottom: 4px;"[39m
+                  [36m>[39m
+                    [0mVIP Access[0m
+                  [36m</div>[39m
+                  [36m<h3[39m
+                    [33mstyle[39m=[32m"font-size: 1.2rem; font-weight: bold; color: var(--text-main); line-height: 1.1;"[39m
+                  [36m>[39m
+                    [0mCSK vs RCB[0m
+                  [36m</h3>[39m
+                  [36m<p[39m
+                    [33mstyle[39m=[32m"font-size: 0.75rem; color: var(--text-muted); margin-top: 2px;"[39m
+                  [36m>[39m
+                    [0mIPL 2026 • Match 24[0m
+                  [36m</p>[39m
+                [36m</div>[39m
+                [36m<div[39m
+                  [33mstyle[39m=[32m"display: flex; gap: 12px;"[39m
+                [36m>[39m
+                  [36m<div[39m
+                    [33mstyle[39m=[32m"display: flex; align-items: center; gap: 6px;"[39m
+                  [36m>[39m
+                    [36m<svg[39m
+                      [33mclass[39m=[32m"lucide lucide-calendar "...
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/__tests__/App.test.jsx:96:27
+     94|
+     95|     // Click SOS
+     96|     const sosBtn = screen.getByText('SOS');
+       |                           ^
+     97|     fireEvent.click(sosBtn);
+     98|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/4]⎯
+
+ FAIL  src/__tests__/App.test.jsx > App Integration > triggers admin emergency protocol
+TestingLibraryElementError: Unable to find an element with the text: FIRE EVACUATION. This could be because the text is broken up by multiple elements. In this case, you can provide a function for your text matcher to make your matcher more flexible.
+
+Ignored nodes: comments, script, style
+[36m<body>[39m
+  [36m<div>[39m
+    [36m<div[39m
+      [33mclass[39m=[32m"app-container "[39m
+    [36m>[39m
+      [36m<header[39m
+        [33mclass[39m=[32m"app-header"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mstyle[39m=[32m"display: flex; align-items: center; gap: 10px;"[39m
+        [36m>[39m
+          [36m<span[39m
+            [33mclass[39m=[32m"mdi mdi-zend pulse"[39m
+            [33mstyle[39m=[32m"font-size: 28px; color: var(--primary);"[39m
+          [36m/>[39m
+          [36m<h1[39m
+            [33mstyle[39m=[32m"font-size: 1.4rem; font-weight: bold; margin: 0px; letter-spacing: 0.5px;"[39m
+          [36m>[39m
+            [0mZentry[0m
+          [36m</h1>[39m
+        [36m</div>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"header-actions"[39m
+          [33mstyle[39m=[32m"display: flex; align-items: center; gap: 16px;"[39m
+        [36m>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"theme-toggle"[39m
+            [33mstyle[39m=[32m"background: transparent; border: medium; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; padding: 4px;"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33mclass[39m=[32m"lucide lucide-sun "[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"20"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"20"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<circle[39m
+                [33mcx[39m=[32m"12"[39m
+                [33mcy[39m=[32m"12"[39m
+                [33mr[39m=[32m"4"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 2v2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12 20v2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m4.93 4.93 1.41 1.41"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m17.66 17.66 1.41 1.41"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M2 12h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M20 12h2"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m6.34 17.66-1.41 1.41"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m19.07 4.93-1.41 1.41"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</button>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"settings-trigger"[39m
+            [33mstyle[39m=[32m"background: transparent; border: medium; color: var(--text-muted); cursor: pointer; display: flex; align-items: center; padding: 4px;"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33mclass[39m=[32m"lucide lucide-settings "[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"20"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"20"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.1a2 2 0 0 1 1 1.72v.51a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.39a2 2 0 0 0-.73-2.73l-.15-.08a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2z"[39m
+              [36m/>[39m
+              [36m<circle[39m
+                [33mcx[39m=[32m"12"[39m
+                [33mcy[39m=[32m"12"[39m
+                [33mr[39m=[32m"3"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</header>[39m
+      [36m<main[39m
+        [33mclass[39m=[32m"content"[39m
+      [36m>[39m
+        [36m<section[39m
+          [33mclass[39m=[32m"map-section"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"emergency-banner"[39m
+            [33mstyle[39m=[32m"background: rgba(239, 68, 68, 0.2); border: 1px solid rgb(239, 68, 68); padding: 12px; border-radius: 12px; margin-bottom: 15px; display: flex; flex-direction: column; gap: 8px; color: var(--text-main);"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mstyle[39m=[32m"display: flex; justify-content: space-between; align-items: center;"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mstyle[39m=[32m"font-size: 0.9rem;"[39m
+              [36m>[39m
+                [0m🚨 [0m
+                [36m<strong>[39m
+                  [0mFire Evacuation[0m
+                [36m</strong>[39m
+              [36m</span>[39m
+            [36m</div>[39m
+            [36m<div[39m
+              [33mstyle[39m=[32m"display: flex; justify-content: space-between; align-items: center;"[39m
+            [36m>[39m
+              [36m<span[39m
+                [33mstyle[39m=[32m"font-size: 0.8rem; color: var(--text-muted);"[39m
+              [36m>[39m
+                [0mFollow safe route to Gate 2 (Pavillion)[0m
+              [36m</span>[39m
+              [36m<button[39m
+                [33mstyle[39m=[32m"background: rgb(239, 68, 68); color: var(--text-inverse); border: medium; padding: 6px 12px; border-radius: 8px; font-weight: bold; cursor: pointer; box-shadow: 0 2px 10px rgba(239, 68, 68, 0.4);"[39m
+              [36m>[39m
+                [0mEvacuation Route[0m
+              [36m</button>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"heatmap-container"[39m
+          [36m>[39m
+            [36m<div[39m
+              [33mclass[39m=[32m"stadium-graphic"[39m
+            [36m>[39m
+              [36m<svg[39m
+                [33mclass[39m=[32m"stadium-svg"[39m
+                [33mviewBox[39m=[32m"0 0 800 800"[39m
+              [36m>[39m
+                [36m<text[39m
+                  [33mfill[39m=[32m"rgba(255,255,255,0.4)"[39m
+                  [33mfont-size[39m=[32m"18"[39m
+                  [33mfont-weight[39m=[32m"bold"[39m
+                  [33mletter-spacing[39m=[32m"2px"[39m
+                  [33mtext-anchor[39m=[32m"middle"[39m
+                  [33mx[39m=[32m"400"[39m
+                  [33my[39m=[32m"40"[39m
+                [36m>[39m
+                  [0mM.A. CHIDAMBARAM STADIUM[0m
+                [36m</text>[39m
+                [36m<circle[39m
+                  [33mcx[39m=[32m"400"[39m
+                  [33mcy[39m=[32m"400"[39m
+                  [33mfill[39m=[32m"var(--bg-darker)"[39m
+                  [33mr[39m=[32m"340"[39m
+                  [33mstroke[39m=[32m"var(--card-border)"[39m
+                  [33mstroke-width[39m=[32m"8"[39m
+                [36m/>[39m
+                [36m<circle[39m
+                  [33mcx[39m=[32m"400"[39m
+                  [33mcy[39m=[32m"400"[39m
+                  [33mfill[39m=[32m"none"[39m
+                  [33mopacity[39m=[32m"0.2"[39m
+                  [33mr[39m=[32m"260"[39m
+                  [33mstroke[39m=[32m"#b45309"[39m
+                  [33mstroke-dasharray[39m=[32m"100 20"[39m
+                  [33mstroke-width[39m=[32m"55"[39m
+                [36m/>[39m
+                [36m<circle[39m
+                  [33mcx[39m=[32m"400"[39m
+                  [33mcy[39m=[32m"400"[39m
+                  [33mfill[39m=[32m"#166534"[39m
+                  [33mopacity[39m=[32m"0.3"[39m
+                  [33mr[39m=[32m"190"[39m
+                [36m/>[39m
+                [36m<rect[39m
+                  [33mfill[39m=[32m"#854d0e"[39m
+                  [33mheight[39m=[32m"120"[39m
+                  [33mopacity[39m=[32m"0.4"[39m
+                  [33mwidth[39m=[32m"30"[39m
+                  [33mx[39m=[32m"385"[39m
+                  [33my[39m=[32m"340"[39m
+                [36m/>[39m
+                [36m<circle[39m
+                  [33mclass[39m=[32m"zone-pulse"[39m
+                  [33mcx[39m=[32m"740"[39m
+                  [33mcy[39m=[32m"650"[39m
+                  [33mfill[39m=[32m"rgba(239, 68, 68, 0.4)"[39m
+                  [33mr[39m=[32m"45"[39m
+                [36m/>[39m
+                [36m<circle[39m
+                  [33mcx[39m=[32m"740"[39m
+                  [33mcy[39m=[32m"650"[39m
+                  [33mfill[39m=[32m"#ef4444"[39m
+                  [33mr[39m=[32m"15"[39m
+                [36m/>[39m
+                [36m<circle[39m
+                  [33mcx[39m=[32m"600"[39m
+                  [33mcy[39m=[32m"550"[39m
+                  [33mfill[39m=[32m"#3b82f6"[39m
+                  [33mr[39m=[32m"8"[39m
+                [36m/>[39m
+                [36m<text[39m
+                  [33mfill[39m=[32m"#3b82f6"[39m
+                  [33mfont-size[39m=[32m"16"[39m
+                  [33mfont-weight[39m=[32m"bold"[39m
+                  [33mtext-anchor[39m=[32m"middle"[39m
+                  [33mx[39m=[32m"600"[39m
+                  [33my[39m=[32m"535"[39m
+                [36m>[39m
+                  [0mYou[0m
+                [36m</text>[39m
+                [36m<line[39m
+                  [33mclass[39m=[32m"escape-path"[39m
+                  [33mstroke[39m=[32m"#ef4444"[39m
+                  [33mstroke-dasharray[39m=[32m"15 10"[39m
+                  [33mstroke-width[39m=[32m"6"[39m
+                  [33mx1[39m=[32m"600"[39m
+                  [33mx2[39m=[32m"740"[39m
+                  [33my1[39m=[32m"550"[39m
+                  [33my2[39m=[32m"650"[39m
+                [36m/>[39m
+              [36m</svg>[39m
+            [36m</div>[39m
+          [36m</div>[39m
+        [36m</section>[39m
+      [36m</main>[39m
+      [36m<div[39m
+        [33mclass[39m=[32m"alert-overlay show"[39m
+      [36m>[39m
+        [36m<div[39m
+          [33mclass[39m=[32m"alert-content"[39m
+        [36m>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"alert-icon-wrapper"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33mclass[39m=[32m"lucide lucide-bell alert-icon"[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"20"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"20"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M6 8a6 6 0 0 1 12 0c0 7 3 9 3 9H3s3-2 3-9"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M10.3 21a1.94 1.94 0 0 0 3.4 0"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</div>[39m
+          [36m<div[39m
+            [33mclass[39m=[32m"alert-text"[39m
+          [36m>[39m
+            [36m<h4[39m
+              [33mstyle[39m=[32m"margin: 0px; font-size: 0.9rem;"[39m
+            [36m>[39m
+              [0mSmart Alert[0m
+            [36m</h4>[39m
+            [36m<p[39m
+              [33mstyle[39m=[32m"margin: 0px; font-size: 0.85rem;"[39m
+            [36m>[39m
+              [0m🚨 EMERGENCY ALERT: Fire Evacuation initiated![0m
+            [36m</p>[39m
+          [36m</div>[39m
+          [36m<button[39m
+            [33mclass[39m=[32m"close-btn"[39m
+          [36m>[39m
+            [36m<svg[39m
+              [33mclass[39m=[32m"lucide lucide-x "[39m
+              [33mfill[39m=[32m"none"[39m
+              [33mheight[39m=[32m"18"[39m
+              [33mstroke[39m=[32m"currentColor"[39m
+              [33mstroke-linecap[39m=[32m"round"[39m
+              [33mstroke-linejoin[39m=[32m"round"[39m
+              [33mstroke-width[39m=[32m"2"[39m
+              [33mviewBox[39m=[32m"0 0 24 24"[39m
+              [33mwidth[39m=[32m"18"[39m
+              [33mxmlns[39m=[32m"http://www.w3.org/2000/svg"[39m
+            [36m>[39m
+              [36m<path[39m
+                [33md[39m=[32m"M18 6 6 18"[39m
+              [36m/>[39m
+              [36m<path[39m
+                [33md[39m=[32m"m6 6 12 12"[39m
+              [36m/>[39m
+            [36m</svg>[39m
+          [36m</button>[39m
+        [36m</div>[39m
+      [36m</div>[39m
+    [36m</div>[39m
+  [36m</div>[39m
+[36m</body>[39m
+ ❯ Object.getElementError node_modules/@testing-library/dom/dist/config.js:37:19
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:76:38
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:52:17
+ ❯ node_modules/@testing-library/dom/dist/query-helpers.js:95:19
+ ❯ src/__tests__/App.test.jsx:134:19
+    132|
+    133|     expect(screen.getByText(/EMERGENCY ALERT: Fire Evacuation/)).toBeI…
+    134|     expect(screen.getByText('FIRE EVACUATION')).toBeInTheDocument();
+       |                   ^
+    135|   });
+    136| });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[3/4]⎯
+
+ FAIL  src/components/__tests__/AlertOverlay.test.jsx > AlertOverlay > calls onClose when close icon is clicked
+ReferenceError: act is not defined
+ ❯ src/components/__tests__/AlertOverlay.test.jsx:36:5
+     34|
+     35|     // onClose is called inside a setTimeout(..., 300)
+     36|     act(() => {
+       |     ^
+     37|       vi.advanceTimersByTime(300);
+     38|     });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[4/4]⎯
+
+
+ Test Files  2 failed | 2 passed (4)
+      Tests  4 failed | 14 passed (18)
+   Start at  21:53:20
+   Duration  771ms (transform 234ms, setup 152ms, import 511ms, tests 418ms, environment 1.20s)
+
