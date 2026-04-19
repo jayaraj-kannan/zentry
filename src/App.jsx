@@ -14,11 +14,13 @@ import './queue-styles.css';
 import './ar-styles.css';
 import './emergency-styles.css';
 import { useAuth } from './context/AuthContext';
+import { useStadium } from './context/StadiumContext';
+import { seedInitialData, simulateCrowdDynamics } from './firebase/stadiumService';
 import AuthScreen from './components/AuthScreen';
-import { LogOut } from 'lucide-react';
+import { LogOut, Play, Square, Database } from 'lucide-react';
 
-// Mock initial data
-const initialZones = [
+// Mock initial data moved to stadiumService.js for seeding
+const initialZonesData = [
   { id: 2, name: 'Gate 2 (Pavillion)', type: 'gate', density: 40, status: 'moderate', x: 740, y: 650, radius: 28 },
   { id: 5, name: 'Gate 5 (Emergency)', type: 'gate', density: 90, status: 'congested', x: 740, y: 400, radius: 28 },
   { id: 7, name: 'Gate 7', type: 'gate', density: 15, status: 'clear', x: 740, y: 150, radius: 28 },
@@ -31,7 +33,7 @@ const initialZones = [
   { id: 19, name: 'Food Court', type: 'facility', density: 75, status: 'congested', x: 580, y: 250, radius: 35 }
 ];
 
-const initialStalls = [
+const initialStallsData = [
   { id: 101, name: 'Chai Kings', type: 'food', waitTime: 5, diet: 'veg', serving: 'Tea, Coffee, Buns & Iced Teas' },
   { id: 102, name: 'KFC', type: 'food', waitTime: 20, diet: 'non-veg', serving: 'Popcorn Chicken' },
   { id: 103, name: 'Wow! Momo', type: 'food', waitTime: 12, diet: 'both', serving: 'Hot Momos' },
@@ -45,6 +47,39 @@ const initialStalls = [
 
 function App() {
   const { user, profileData, updateProfileData, role, logout } = useAuth();
+  const { zones, stalls, parkingLots, loading: stadiumLoading } = useStadium();
+  const [isSimulating, setIsSimulating] = useState(false);
+  const [isSeeding, setIsSeeding] = useState(false);
+  
+  // Real-time Simulation Loop
+  useEffect(() => {
+    let interval;
+    if (isSimulating) {
+      interval = setInterval(() => {
+        simulateCrowdDynamics();
+      }, 5000);
+    }
+    return () => clearInterval(interval);
+  }, [isSimulating]);
+
+  const handleSeedData = async () => {
+    setIsSeeding(true);
+    try {
+      // These are the constants defined above
+      const parkingLotsInit = [
+        { id: 1, name: 'Main Lot A', occupancy: 92, distance: '100m', type: 'Public', entryGate: 'via Wallajah Rd' },
+        { id: 2, name: 'Premium Lot B', occupancy: 45, distance: '50m', type: 'VIP', entryGate: 'via Gate 5 (Inner)' },
+        { id: 3, name: 'South Lot C', occupancy: 60, distance: '250m', type: 'Overflow', entryGate: 'via Bells Rd' }
+      ];
+      await seedInitialData(initialZonesData, initialStallsData, parkingLotsInit);
+      setCurrentAlert({ message: "Stadium data seeded successfully!" });
+    } catch (error) {
+       console.error(error);
+       setCurrentAlert({ message: "Seeding failed. Check console." });
+    } finally {
+      setIsSeeding(false);
+    }
+  };
   
   // Local state for profile form
   const [phone, setPhone] = useState('');
@@ -60,6 +95,12 @@ function App() {
       setAddress(profileData.address || '');
       setEmergencyName(profileData.emergencyName || '');
       setEmergencyPhone(profileData.emergencyPhone || '');
+      
+      // Persistent Check-in Sync
+      if (profileData.isCheckedIn) {
+        setIsCheckedIn(true);
+        setCheckInStatus('scanned');
+      }
     }
   }, [profileData]);
 
@@ -79,8 +120,6 @@ function App() {
       setIsSaving(false);
     }
   };
-  const [zones, setZones] = useState(initialZones);
-  const [stalls, setStalls] = useState(initialStalls);
   const [currentAlert, setCurrentAlert] = useState(null);
   const [isEmergency, setIsEmergency] = useState(false);
   const [activeTab, setActiveTab] = useState('home');
@@ -94,6 +133,9 @@ function App() {
   const [theme, setTheme] = useState(localStorage.getItem('zentry-theme') || 'dark');
   const [showSeatRoute, setShowSeatRoute] = useState(false);
 
+  // Remapped constants to context values
+  const userParkingId = 2; // Fixed for demo
+
   // Persist theme to localStorage
   useEffect(() => {
     localStorage.setItem('zentry-theme', theme);
@@ -106,11 +148,7 @@ function App() {
   const [activeEmergencyPayload, setActiveEmergencyPayload] = useState(null);
   const [isExitPhase, setIsExitPhase] = useState(false);
 
-  const [parkingLots, setParkingLots] = useState([
-    { id: 1, name: 'Main Lot A', occupancy: 92, distance: '100m', type: 'Public', entryGate: 'via Wallajah Rd' },
-    { id: 2, name: 'Premium Lot B', occupancy: 45, distance: '50m', type: 'VIP', entryGate: 'via Gate 5 (Inner)' },
-    { id: 3, name: 'South Lot C', occupancy: 60, distance: '250m', type: 'Overflow', entryGate: 'via Bells Rd' }
-  ]);
+  const [parkingLotsState, setParkingLots] = useState([]); // Fallback
 
   const [showAssistant, setShowAssistant] = useState(false);
 
@@ -166,10 +204,21 @@ function App() {
 
   const handleUpdateStatus = () => {
     setCheckInStatus('scanning');
-    setTimeout(() => {
+    setTimeout(async () => {
       setCheckInStatus('scanned');
       setIsCheckedIn(true);
-      setCurrentAlert({ message: "Verified successfully. You're in the event!" });
+      
+      // Persist to DB
+      try {
+        await updateProfileData({
+          isCheckedIn: true,
+          checkInTime: new Date().toISOString()
+        });
+        setCurrentAlert({ message: "Verified successfully. You're in the event!" });
+      } catch (error) {
+        console.error("Failed to persist check-in:", error);
+        setCurrentAlert({ message: "Checked in locally, but failed to sync with server." });
+      }
     }, 4000);
   };
 
@@ -181,49 +230,6 @@ function App() {
     setCurrentAlert({ message: `Opening Google Maps for ${dest}...` });
   };
 
-  // Simulate dynamic crowd data changes
-  useEffect(() => {
-    const interval = setInterval(() => {
-      setZones(prevZones => prevZones.map(zone => {
-        // Randomly fluctuate density by -5 to +5
-        let change = Math.floor(Math.random() * 11) - 5;
-        let newDensity = Math.max(0, Math.min(100, zone.density + change));
-
-        let newStatus = 'clear';
-        if (newDensity > 70) newStatus = 'congested';
-        else if (newDensity > 40) newStatus = 'moderate';
-
-        return { ...zone, density: newDensity, status: newStatus };
-      }));
-    }, 4000);
-
-    return () => clearInterval(interval);
-  }, []);
-
-  // Simulate Wait Time fluctuations
-  useEffect(() => {
-    const stallInterval = setInterval(() => {
-      setStalls(prev => prev.map(stall => {
-        let change = Math.floor(Math.random() * 5) - 2;
-        let newWaitTime = Math.max(0, stall.waitTime + change);
-        return { ...stall, waitTime: newWaitTime };
-      }));
-    }, 5000);
-    return () => clearInterval(stallInterval);
-  }, []);
-
-  // Simulate Real-time Parking Availability changes
-  useEffect(() => {
-    const parkingInterval = setInterval(() => {
-      setParkingLots(prev => prev.map(lot => {
-        // Subtle drift in occupancy
-        let change = Math.floor(Math.random() * 3) - 1;
-        let newOccupancy = Math.max(0, Math.min(100, lot.occupancy + change));
-        return { ...lot, occupancy: newOccupancy };
-      }));
-    }, 6000);
-    return () => clearInterval(parkingInterval);
-  }, []);
 
   // Simulate Push Alert System
   useEffect(() => {
@@ -352,6 +358,27 @@ function App() {
                   >
                     Initiate Phased Exit <MapIcon size={18} />
                   </button>
+                  <div style={{ height: '1.5rem' }}></div>
+
+                  <p style={{ color: 'var(--primary)', fontWeight: 'bold', fontSize: '0.75rem', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '0.8rem' }}>Simulation & Data</p>
+                  
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                    <button
+                      onClick={() => setIsSimulating(!isSimulating)}
+                      style={{ width: '100%', padding: '0.8rem', background: isSimulating ? 'rgba(16, 185, 129, 0.1)' : 'rgba(255,255,255,0.05)', border: `1px solid ${isSimulating ? '#10b981' : 'rgba(255,255,255,0.1)'}`, color: isSimulating ? '#10b981' : 'white', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                    >
+                      {isSimulating ? <><Square size={16} /> Stop Live Simulation</> : <><Play size={16} /> Start Live Simulation</>}
+                    </button>
+                    
+                    <button
+                      onClick={handleSeedData}
+                      disabled={isSeeding || zones.length > 0}
+                      style={{ width: '100%', padding: '0.8rem', background: 'rgba(59, 130, 246, 0.1)', border: '1px solid var(--primary)', color: 'var(--primary)', borderRadius: '10px', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', opacity: zones.length > 0 ? 0.5 : 1 }}
+                    >
+                      {isSeeding ? <Loader2 size={16} className="spin" /> : <Database size={16} />} 
+                      {zones.length > 0 ? "Data Already Seeded" : "Initial Data Seed"}
+                    </button>
+                  </div>
                   <div style={{ height: '1rem' }}></div>
                 </>
               ) : null}

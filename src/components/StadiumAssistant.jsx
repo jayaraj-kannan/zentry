@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Send, User, Bot, Languages, MessageSquare, MapPin, Coffee, Info, Activity, ShieldAlert, X } from 'lucide-react';
+import { Send, User, Bot, Languages, MessageSquare, MapPin, Coffee, Info, Activity, ShieldAlert, X, AlertCircle } from 'lucide-react';
+import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const StadiumAssistant = ({ zones, stalls, parkingLots, onClose, onNavigate }) => {
   const [messages, setMessages] = useState([
@@ -88,32 +89,104 @@ const StadiumAssistant = ({ zones, stalls, parkingLots, onClose, onNavigate }) =
     }
   };
 
-  const handleSend = (text = inputText) => {
+  const changeLanguage = (lang) => {
+    setLanguage(lang);
+    setMessages([{ id: Date.now(), text: lang === 'ta' ? "வணக்கம்! நான் உங்கள் மைதான உதவியாளர்..." : lang === 'hi' ? "नमस्ते! मैं आपका स्टेडियम सहायक हूँ..." : "Hello! I am your Smart Stadium Assistant...", sender: 'bot', lang }]);
+  };
+
+  const getSystemPrompt = (lang) => {
+    const langNames = { en: 'English', ta: 'Tamil', hi: 'Hindi' };
+    const stadiumContext = `
+      STADIUM DATA:
+      - Zones/Gates: ${JSON.stringify(zones)}
+      - Food/Restrooms: ${JSON.stringify(stalls)}
+      - Parking: ${JSON.stringify(parkingLots)}
+    `;
+
+    return `
+      You are the "Zentry Smart Stadium Assistant" at M.A. Chidambaram Stadium.
+      
+      STRICT RULES:
+      1. ONLY answer questions related to the stadium, event, food counters, restrooms, parking, or security.
+      2. If a user asks about anything outside this context (e.g., general knowledge, politics, other sports), politely refuse: "I am your event assistant and I stay focused on helping you have a great time at today's event!"
+      3. Use real data provided below to answer precisely.
+      4. Respond ONLY in ${langNames[lang]}.
+      5. Keep responses concise and friendly.
+      
+      OUTPUT FORMAT:
+      You MUST respond in a valid JSON format EXACTLY as following:
+      {
+        "text": "Your conversational response here",
+        "action": { "label": "Button Label (e.g. Navigate to KFC)", "dest": "Destination Name (must match a name in the data)" },
+        "stats": [
+          { "label": "Wait Time", "value": "5 min", "status": "clear" },
+          { "label": "Occupancy", "value": "High", "status": "congested" }
+        ]
+      }
+      
+      - The "action" and "stats" fields are OPTIONAL. Only include them if relevant to the query.
+      - "status" must be one of: "clear", "moderate", "congested".
+      
+      CURRENT STATUS:
+      ${stadiumContext}
+    `;
+  };
+
+  const handleSend = async (text = inputText) => {
     if (!text.trim()) return;
 
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
     const newMsg = { id: Date.now(), text, sender: 'user' };
     setMessages(prev => [...prev, newMsg]);
     setInputText("");
+
+    if (!apiKey) {
+      setMessages(prev => [...prev, {
+        id: Date.now() + 1,
+        text: "Assistant is in offline mode. Please add VITE_GEMINI_API_KEY to your .env to enable the full AI experience.",
+        sender: 'bot'
+      }]);
+      return;
+    }
+
     setIsTyping(true);
 
-    setTimeout(() => {
-      let replyObj = { text: responses[language].default };
-      const lowerText = text.toLowerCase();
+    try {
+      const genAI = new GoogleGenerativeAI(apiKey);
+      const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
 
-      if (lowerText.includes('gate') || lowerText.includes('வழி')) replyObj = responses[language].gate4;
-      else if (lowerText.includes('exit') || lowerText.includes('வெளியேற')) replyObj = responses[language].exit;
-      else if (lowerText.includes('food') || lowerText.includes('உணவு') || lowerText.includes('खाना')) replyObj = typeof responses[language].food === 'function' ? responses[language].food() : responses[language].food;
-      else if (lowerText.includes('restroom') || lowerText.includes('கழிப்பறை') || lowerText.includes('toilet')) replyObj = { text: responses[language].restroom };
-      else if (lowerText.includes('crowd') || lowerText.includes('நேரிசல்') || lowerText.includes('भीड़')) replyObj = { text: typeof responses[language].crowd === 'function' ? responses[language].crowd() : responses[language].crowd };
+      const prompt = getSystemPrompt(language) + "\n\nUser Question: " + text;
 
-      setMessages(prev => [...prev, { id: Date.now() + 1, ...replyObj, sender: 'bot' }]);
+      const result = await model.generateContent(prompt);
+      const response = await result.response;
+      let rawText = response.text();
+
+      let structuredResponse;
+      try {
+        // Find the first { and last } to extract JSON if there's markdown wrap
+        const jsonMatch = rawText.match(/\{[\s\S]*\}/);
+        const jsonStr = jsonMatch ? jsonMatch[0] : rawText;
+        structuredResponse = JSON.parse(jsonStr);
+      } catch (e) {
+        console.warn("AI didn't return valid JSON, falling back to text:", rawText);
+        structuredResponse = { text: rawText };
+      }
+
+      setMessages(prev => [...prev, {
+        id: Date.now() + 1,
+        ...structuredResponse,
+        sender: 'bot'
+      }]);
+    } catch (error) {
+      console.error("Gemini Error:", error);
+      setMessages(prev => [...prev, {
+        id: Date.now() + 1,
+        text: "I'm having trouble connecting to my AI brain. Please check your connection.",
+        sender: 'bot'
+      }]);
+    } finally {
       setIsTyping(false);
-    }, 1200);
-  };
-
-  const changeLanguage = (lang) => {
-    setLanguage(lang);
-    setMessages([{ id: Date.now(), text: responses[lang].greeting, sender: 'bot', lang }]);
+    }
   };
 
   return (
@@ -128,8 +201,8 @@ const StadiumAssistant = ({ zones, stalls, parkingLots, onClose, onNavigate }) =
             <div>
               <h3 style={{ fontSize: '1.1rem', fontWeight: 'bold', color: 'var(--text-main)' }}>Stadium AI Assistant</h3>
               <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
-                 <div style={{ width: '6px', height: '6px', background: 'var(--status-clear)', borderRadius: '50%' }}></div>
-                 <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: '600' }}>ONLINE • MULTILINGUAL</span>
+                <div style={{ width: '6px', height: '6px', background: 'var(--status-clear)', borderRadius: '50%' }}></div>
+                <span style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: '600' }}>ONLINE • MULTILINGUAL</span>
               </div>
             </div>
           </div>
@@ -139,8 +212,8 @@ const StadiumAssistant = ({ zones, stalls, parkingLots, onClose, onNavigate }) =
         {/* Language Selector */}
         <div style={{ display: 'flex', gap: '8px', padding: '0.8rem 1.2rem', background: 'rgba(0,0,0,0.2)' }}>
           {['en', 'ta', 'hi'].map(lang => (
-            <button 
-              key={lang} 
+            <button
+              key={lang}
               onClick={() => changeLanguage(lang)}
               style={{ padding: '6px 12px', fontSize: '0.75rem', borderRadius: '8px', border: '1px solid var(--card-border)', background: language === lang ? 'var(--primary)' : 'var(--surface-subtle)', color: language === lang ? 'var(--text-inverse)' : 'var(--text-main)', cursor: 'pointer', fontWeight: 'bold' }}
             >
@@ -153,8 +226,8 @@ const StadiumAssistant = ({ zones, stalls, parkingLots, onClose, onNavigate }) =
         <div style={{ flex: 1, overflowY: 'auto', padding: '1.5rem 1.2rem', display: 'flex', flexDirection: 'column', gap: '1.2rem' }}>
           {messages.map(msg => (
             <div key={msg.id} style={{ alignSelf: msg.sender === 'user' ? 'flex-end' : 'flex-start', maxWidth: '85%' }}>
-              <div style={{ 
-                padding: '12px 16px', 
+              <div style={{
+                padding: '12px 16px',
                 borderRadius: msg.sender === 'user' ? '20px 4px 20px 20px' : '4px 20px 20px 20px',
                 background: msg.sender === 'user' ? 'var(--primary)' : 'var(--surface-subtle)',
                 color: msg.sender === 'user' ? 'var(--text-inverse)' : 'var(--text-main)',
@@ -164,11 +237,53 @@ const StadiumAssistant = ({ zones, stalls, parkingLots, onClose, onNavigate }) =
               }}>
                 {msg.text}
 
+                {/* Render Stats Pills if exists */}
+                {msg.stats && msg.stats.length > 0 && (
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', marginTop: '12px' }}>
+                    {msg.stats.map((stat, idx) => (
+                      <div key={idx} style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        padding: '6px 10px',
+                        background: 'rgba(255,255,255,0.05)',
+                        border: '1px solid rgba(255,255,255,0.1)',
+                        borderRadius: '10px'
+                      }}>
+                        <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 'bold' }}>{stat.label}</span>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '5px' }}>
+                          <div style={{ width: '6px', height: '6px', borderRadius: '50%', background: `var(--status-${stat.status || 'clear'})` }}></div>
+                          <span style={{ fontSize: '0.85rem', fontWeight: '600' }}>{stat.value}</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
                 {/* Render Action Button if exists */}
                 {msg.action && (
-                  <button 
+                  <button
                     onClick={() => { onNavigate(msg.action.dest); onClose(); }}
-                    style={{ marginTop: '12px', width: '100%', padding: '10px', background: 'rgba(255,255,255,0.2)', border: 'none', borderRadius: '10px', color: '#fff', fontSize: '0.8rem', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}
+                    style={{
+                      marginTop: '12px',
+                      width: '100%',
+                      padding: '12px',
+                      background: 'rgba(255,255,255,0.15)',
+                      backdropFilter: 'blur(5px)',
+                      border: '1px solid rgba(255,255,255,0.1)',
+                      borderRadius: '12px',
+                      color: '#fff',
+                      fontSize: '0.85rem',
+                      fontWeight: 'bold',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      gap: '8px',
+                      transition: 'all 0.2s',
+                      boxShadow: '0 4px 12px rgba(0,0,0,0.2)'
+                    }}
+                    onMouseOver={e => e.currentTarget.style.background = 'rgba(255,255,255,0.25)'}
+                    onMouseOut={e => e.currentTarget.style.background = 'rgba(255,255,255,0.15)'}
                   >
                     <MapPin size={14} /> {msg.action.label}
                   </button>
@@ -178,7 +293,7 @@ const StadiumAssistant = ({ zones, stalls, parkingLots, onClose, onNavigate }) =
           ))}
           {isTyping && (
             <div style={{ alignSelf: 'flex-start', color: 'var(--text-muted)', fontSize: '0.8rem', display: 'flex', alignItems: 'center', gap: '8px', paddingLeft: '4px' }}>
-              <Activity size={14} className="pulse" /> {responses[language].typing}
+              <Activity size={14} className="pulse" /> {language === 'ta' ? "பதில் தயார் செய்யப்படுகிறது..." : language === 'hi' ? "एआई सोच रहा है..." : "AI is generating response..."}
             </div>
           )}
           <div ref={chatEndRef} />
@@ -192,7 +307,7 @@ const StadiumAssistant = ({ zones, stalls, parkingLots, onClose, onNavigate }) =
             { label: 'Gate 4?', icon: <MapPin size={14} /> },
             { label: 'Crowd status?', icon: <Activity size={14} /> }
           ].map(chip => (
-            <button 
+            <button
               key={chip.label}
               onClick={() => handleSend(chip.label)}
               style={{ padding: '8px 14px', background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '20px', color: 'var(--text-main)', fontSize: '0.8rem', cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '6px', transition: 'all 0.2s' }}
@@ -205,15 +320,15 @@ const StadiumAssistant = ({ zones, stalls, parkingLots, onClose, onNavigate }) =
         {/* Input */}
         <div style={{ padding: '1.2rem', background: 'rgba(255,255,255,0.02)', borderTop: '1px solid rgba(255,255,255,0.05)' }}>
           <div style={{ display: 'flex', gap: '10px' }}>
-            <input 
-              type="text" 
+            <input
+              type="text"
               value={inputText}
               onChange={(e) => setInputText(e.target.value)}
               onKeyPress={(e) => e.key === 'Enter' && handleSend()}
               placeholder="How can I help you?"
               style={{ flex: 1, padding: '14px 18px', borderRadius: '16px', border: '1px solid var(--card-border)', background: 'var(--surface-inner)', color: 'var(--text-main)', fontSize: '1rem', outline: 'none' }}
             />
-            <button 
+            <button
               onClick={() => handleSend()}
               style={{ padding: '14px', width: '54px', height: '54px', background: 'var(--primary)', color: '#fff', border: 'none', borderRadius: '16px', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 4px 15px rgba(59, 130, 246, 0.4)' }}
             >

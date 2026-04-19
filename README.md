@@ -34,7 +34,22 @@
 - **One-Tap Reporting**: Dedicated fast-action menu for Medical, Security, Fire, and Harassment alerts.
 - **AI Dispatch**: Simulates immediate security response with ETA tracking and persistent management.
 
-### 7. 🔔 Persistent Smart Alerts
+### 7. 🔐 Secure Authentication (Firebase)
+- **Multi-Provider Login**: Supports Email/Password and **Google One-Tap** authentication.
+- **Glassmorphic Auth UI**: A premium, animated login and signup experience with real-time validation.
+- **Global Auth State**: Seemless session management using React Context and Firebase SDK.
+
+### 8. 🛡️ Role-Based Access Control (RBAC)
+- **Admin vs. User**: Granular permissions system powered by Firestore.
+- **Restricted Controls**: Stadium-wide emergency triggers and advanced management tools are strictly reserved for **Admins**.
+- **Dynamic UI**: The interface adapts based on the user's role, hiding or revealing management icons as needed.
+
+### 9. 👤 Extended User Profiles
+- **Comprehensive Details**: Users can store and update their phone number, address, and seat details.
+- **Emergency Contacts**: Dedicated fields for saving critical contact information for stadium safety.
+- **Data Persistence**: All profile metadata is synchronized in real-time with Cloud Firestore.
+
+### 10. 🔔 Persistent Smart Alerts
 - **Top-Down Notifications**: High-visibility alerts positioned at the top of the app.
 - **Persistence Logic**: Alerts stay visible until manually dismissed, ensuring critical event updates are never missed.
 
@@ -42,6 +57,7 @@
 
 ## 🛠️ Technology Stack
 - **Frontend**: React (Vite)
+- **Backend-as-a-Service**: Firebase (Authentication & Cloud Firestore)
 - **Styling**: Vanilla CSS (Custom Design System)
 - **Icons**: Lucide React & Material Design Icons (MDI)
 - **Typography**: Outfit (Google Fonts)
@@ -59,9 +75,30 @@ Zentry follows a **Premium Dark Mode** aesthetic, utilizing:
 
 ## 🏁 Getting Started
 1. Clone the repository.
-2. Run `npm install`.
-3. Start the development server with `npm run dev`.
-4. Open the app and navigate to the **Tickets** tab to begin the "Check-In" journey.
+2. **Environment Setup**: Create a `.env` file in the root and add your configuration variables:
+   ```env
+   # Firebase Configuration
+   VITE_FIREBASE_API_KEY=your_api_key
+   VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
+   VITE_FIREBASE_PROJECT_ID=your_id
+   VITE_FIREBASE_STORAGE_BUCKET=your_bucket.appspot.com
+   VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+   VITE_FIREBASE_APP_ID=your_app_id
+
+   # AI Configuration (Optional but recommended)
+   VITE_GEMINI_API_KEY=your_gemini_api_key
+   ```
+3. Run `npm install`.
+4. Start the development server with `npm run dev`.
+5. **Initial Setup**: To test admin features, manually promote your user UID to `admin` in the Firestore `users` collection.
+
+---
+
+## 🛡️ Security Rules
+The application uses Firestore Security Rules to protect user data:
+- Users can only read/write their **own** profile documents.
+- Only **Admins** can modify the `role` field in the database.
+- See `FIRESTORE_SECURITY_RULES.md` for the recommended configuration.
 
 ---
 
