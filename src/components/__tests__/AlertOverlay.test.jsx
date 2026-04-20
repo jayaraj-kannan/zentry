@@ -29,7 +29,7 @@ describe('AlertOverlay', () => {
     const alert = { message: 'Close me' };
     render(<AlertOverlay alert={alert} onClose={onClose} />);
     
-    const closeButton = screen.getByRole('button');
+    const closeButton = screen.getByRole('button', { name: /Close Alert/i });
     fireEvent.click(closeButton);
     
     // onClose is called inside a setTimeout(..., 300)
@@ -39,5 +39,11 @@ describe('AlertOverlay', () => {
     
     expect(onClose).toHaveBeenCalled();
     vi.useRealTimers();
+  });
+
+  it('has semantic alert role', () => {
+    const alert = { message: 'Semantic Check' };
+    render(<AlertOverlay alert={alert} onClose={vi.fn()} />);
+    expect(screen.getByRole('alert')).toBeInTheDocument();
   });
 });

@@ -55,11 +55,9 @@ describe('QueueManager', () => {
     const onNavigate = vi.fn();
     render(<QueueManager stalls={mockStalls} onNavigate={onNavigate} />);
     
-    const navButtons = screen.getAllByRole('button').filter(button => 
-        button.querySelector('svg') && !button.textContent.includes('Pre-Order')
-    );
+    const navButton = screen.getByRole('button', { name: /Navigate to Stall A/i });
     
-    fireEvent.click(navButtons[0]);
+    fireEvent.click(navButton);
     expect(onNavigate).toHaveBeenCalledWith('Stall A');
   });
 });

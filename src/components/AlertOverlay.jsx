@@ -15,17 +15,21 @@ const AlertOverlay = ({ alert, onClose }) => {
   if (!alert && !visible) return null;
 
   return (
-    <div className={`alert-overlay ${visible ? 'show' : 'hide'}`}>
+    <div className={`alert-overlay ${visible ? 'show' : 'hide'}`} role="alert" aria-live="assertive">
       <div className="alert-content">
         <div className="alert-icon-wrapper">
-          <Bell size={20} className="alert-icon" />
+          <Bell size={20} className="alert-icon" aria-hidden="true" />
         </div>
         <div className="alert-text">
           <h4 style={{ margin: 0, fontSize: '0.9rem' }}>Smart Alert</h4>
           <p style={{ margin: 0, fontSize: '0.85rem' }}>{alert?.message}</p>
         </div>
-        <button onClick={() => { setVisible(false); setTimeout(onClose, 300); }} className="close-btn">
-          <X size={18} />
+        <button 
+          onClick={() => { setVisible(false); setTimeout(onClose, 300); }} 
+          className="close-btn"
+          aria-label="Close Alert"
+        >
+          <X size={18} aria-hidden="true" />
         </button>
       </div>
     </div>

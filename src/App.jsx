@@ -523,25 +523,27 @@ function App() {
       )}
 
       <main className="content">
+        {(isEmergency || sosState !== 'idle') && (
+          <div style={{ padding: '1rem 1rem 0 1rem' }}>
+            <div className="emergency-banner" style={{ background: 'rgba(239, 68, 68, 0.2)', border: '1px solid #ef4444', padding: '12px', borderRadius: '12px', marginBottom: '15px', display: 'flex', flexDirection: 'column', gap: '8px', color: 'var(--text-main)' }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: '0.9rem' }}>🚨 <strong>{sosState === 'active' ? 'SECURITY DISPATCHED' : sosState === 'dispatching' ? 'SOS TRANSMITTING' : (activeEmergencyPayload || 'CRITICAL EMERGENCY')}</strong></span>
+              </div>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{sosState !== 'idle' ? 'Personnel are tracking your location. Stay where you are.' : 'Follow safe route to Gate 2 (Pavillion)'}</span>
+                <button
+                  onClick={() => handleNavigation('Gate 2 (Pavillion)')}
+                  style={{ background: '#ef4444', color: 'var(--text-inverse)', border: 'none', padding: '6px 12px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 2px 10px rgba(239, 68, 68, 0.4)' }}
+                >
+                  {sosState !== 'idle' ? 'Your Location' : 'Evacuation Route'}
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
         {activeTab === 'home' && (
           <>
             <section className="map-section">
-              {(isEmergency || sosState !== 'idle') && (
-                <div className="emergency-banner" style={{ background: 'rgba(239, 68, 68, 0.2)', border: '1px solid #ef4444', padding: '12px', borderRadius: '12px', marginBottom: '15px', display: 'flex', flexDirection: 'column', gap: '8px', color: 'var(--text-main)' }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontSize: '0.9rem' }}>🚨 <strong>{sosState === 'active' ? 'SECURITY DISPATCHED' : sosState === 'dispatching' ? 'SOS TRANSMITTING' : (activeEmergencyPayload || 'CRITICAL EMERGENCY')}</strong></span>
-                  </div>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                    <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{sosState !== 'idle' ? 'Personnel are tracking your location. Stay where you are.' : 'Follow safe route to Gate 2 (Pavillion)'}</span>
-                    <button
-                      onClick={() => handleNavigation('Gate 2 (Pavillion)')}
-                      style={{ background: '#ef4444', color: 'var(--text-inverse)', border: 'none', padding: '6px 12px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 2px 10px rgba(239, 68, 68, 0.4)' }}
-                    >
-                      {sosState !== 'idle' ? 'Your Location' : 'Evacuation Route'}
-                    </button>
-                  </div>
-                </div>
-              )}
               <HeatMap 
                 zones={zones} 
                 isEmergency={isEmergency || sosState !== 'idle'} 

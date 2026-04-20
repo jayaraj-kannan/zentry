@@ -72,8 +72,12 @@ const QueueManager = ({ stalls, onNavigate }) => {
                   </button>
                 ) : (
                   <>
-                    <button className="nav-btn" onClick={() => onNavigate(stall.name)}>
-                      <MapPin size={14} />
+                    <button 
+                      className="nav-btn" 
+                      onClick={() => onNavigate(stall.name)}
+                      aria-label={`Navigate to ${stall.name}`}
+                    >
+                      <MapPin size={14} aria-hidden="true" />
                     </button>
                     <button className="preorder-btn" onClick={() => handlePreOrder(stall.id)}>
                       Pre-Order
@@ -99,8 +103,12 @@ const QueueManager = ({ stalls, onNavigate }) => {
                 <span className="wait-time" style={{ color: stall.waitTime > 10 ? 'var(--status-congested)' : stall.waitTime > 5 ? 'var(--status-moderate)' : 'var(--status-clear)', fontWeight: '600' }}>
                   {stall.waitTime} min
                 </span>
-                <button className="nav-btn" onClick={() => onNavigate(stall.name)}>
-                  <MapPin size={14} />
+                <button 
+                  className="nav-btn" 
+                  onClick={() => onNavigate(stall.name)}
+                  aria-label={`Navigate to ${stall.name}`}
+                >
+                  <MapPin size={14} aria-hidden="true" />
                 </button>
               </div>
             </div>

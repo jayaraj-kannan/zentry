@@ -20,11 +20,17 @@ describe('AlertOverlay Component', () => {
     const alert = { message: 'Test Alert' };
     render(<AlertOverlay alert={alert} onClose={onClose} />);
     
-    const closeButton = screen.getByRole('button');
+    const closeButton = screen.getByRole('button', { name: /Close Alert/i });
     fireEvent.click(closeButton);
     
     // The component has a 300ms timeout before calling onClose
     await new Promise(resolve => setTimeout(resolve, 350));
     expect(onClose).toHaveBeenCalled();
+  });
+
+  it('has semantic alert role', () => {
+    const alert = { message: 'Semantic Check' };
+    render(<AlertOverlay alert={alert} onClose={vi.fn()} />);
+    expect(screen.getByRole('alert')).toBeInTheDocument();
   });
 });
