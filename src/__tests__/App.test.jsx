@@ -33,7 +33,9 @@ vi.mock('../context/StadiumContext', () => ({
 vi.mock('../firebase/stadiumService', () => ({
   seedInitialData: vi.fn(),
   simulateCrowdDynamics: vi.fn(),
-  reportSosAlert: vi.fn().mockResolvedValue('alert-id')
+  reportSosAlert: vi.fn().mockResolvedValue('alert-id'),
+  resolveSosAlert: vi.fn().mockResolvedValue(undefined),
+  getActiveUserSos: vi.fn().mockResolvedValue(null)
 }));
 
 // Mock matchMedia
@@ -154,6 +156,18 @@ describe('App Integration', () => {
     // The banner should now show SECURITY DISPATCHED (specific to the strong tag in the banner)
     expect(screen.getByText('SECURITY DISPATCHED', { selector: 'strong' })).toBeInTheDocument();
     
+    // 5. Resolve SOS
+    const resolveBtn = screen.getByRole('button', { name: /Mark Resolved/i });
+    await act(async () => {
+      fireEvent.click(resolveBtn);
+      await Promise.resolve();
+    });
+    
+    // Everything should be back to normal
+    // Check that neither the banner status nor the alert overlay contains the dispatched message
+    expect(screen.queryAllByText(/SECURITY DISPATCHED/i).length).toBe(0);
+    expect(screen.queryByText(/SOS TRANSMITTING/i)).not.toBeInTheDocument();
+
     vi.useRealTimers();
   });
 

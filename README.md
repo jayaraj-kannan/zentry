@@ -59,6 +59,41 @@ The system relies on a **Centralized Live Event State**:
 - **Global Status Banner**: Visible across all tabs during emergencies.
 - **AI Dispatch**: Automatic security response simulation.
 
+## 🏗️ Technical Implementation & Logic Flows
+
+### 1. AI Assistant Intent-Action Flow
+Zentry doesn't just "chat"; it command-and-controls the UI based on natural language.
+- **The Flow**: 
+    1.  User submits a query (e.g., "Where is the nearest exit?").
+    2.  `StadiumAssistant.jsx` sends the query to our AI parsing engine.
+    3.  The engine returns an **Intent Object** (e.g., `{ action: 'navigation', target: 'Gate 2' }`).
+    4.  The frontend maps this to a direct Google Maps deep-link or a UI tab switch.
+- **Implementation**: Uses a robust keyword-intent mapping combined with Google Gemini for context-aware parsing.
+
+### 2. SOS Emergency Lifecycle
+A mission-critical flow that synchronizes the stadium during a crisis.
+- **The Flow**:
+    1.  **Trigger**: User taps "Medical SOS" in the emergency portal.
+    2.  **Signal**: A document is written to the `sos_alerts` collection in Firestore.
+    3.  **Background Processing**: A **Cloud Function** (`onsostrigger`) detects the new alert.
+    4.  **Escalation**: The function creates a secondary `security_dispatch_log` and updates the `stadium_status` global state.
+    5.  **Global Feedback**: All active devices listen to the `stadium_status` change, triggering the red **Global Emergency Banner** across the app.
+- **Implementation**: Firebase Cloud Functions (v2) handle the escalation logic to keep client-side code lightweight.
+
+### 3. Real-Time Crowd Density Lifecycle
+- **The Flow**:
+    1.  **Data Ingestion**: Simulated gate-entry sensors pipe density values (0-100) into Firestore.
+    2.  **Context Propagation**: `StadiumContext.jsx` subscribes to these updates via `onSnapshot`.
+    3.  **Visual Render**: The `HeatMap.jsx` component receives the raw data and translates it into dynamic HSL color values and CSS-puling animations.
+- **Implementation**: Uses Firestore's real-time listeners for sub-second synchronization across the attendee pool.
+
+### 4. Role-Based Access Flow (RBAC)
+- **The Flow**:
+    1.  **Auth**: User logs in; Firestore `users` document is fetched.
+    2.  **Logic**: `AuthContext.jsx` checks for a `role: 'admin'` attribute.
+    3.  **UI Switch**: Conditional rendering in `App.jsx` reveals the "Admin Security Panel" only if the role is verified.
+- **Implementation**: Secured by **Firestore Security Rules** which prevent non-admins from manually changing their own role attribute.
+
 ---
 
 ## 🛠️ The Four Pillars of Zentry
@@ -92,6 +127,7 @@ Zentry leverages the best of Google's cloud and AI technology:
 ## 🛠️ Technology Stack
 - **Frontend**: React (Vite)
 - **Backend**: Firebase (Auth, Firestore, Cloud Functions)
+- **Maps**: Google Maps JavaScript API (`@react-google-maps/api`)
 - **Styling**: Vanilla CSS (Premium Glassmorphism Design System)
 - **Visuals**: Lucide React & MDI
 
@@ -99,8 +135,27 @@ Zentry leverages the best of Google's cloud and AI technology:
 
 ## 🏁 Getting Started
 1. Clone the repository.
-2. Setup `.env` (Firebase API Keys & VITE_GEMINI_API_KEY).
+2. Setup `.env` with the following keys:
+   - Firebase API Keys (`VITE_FIREBASE_API_KEY`, etc.)
+   - `VITE_GEMINI_API_KEY` — Google Gemini AI
+   - `VITE_GOOGLE_MAPS_API_KEY` — Google Maps JavaScript API
 3. Run `npm install` and `npm run dev`.
 4. Run `npx vitest run` to verify the **26-test stabilization suite**.
+
+---
+
+## 🔑 Demo Credentials
+
+| Email | Password | Role | Access |
+|---|---|---|---|
+| `test3@gmail.com` | `123456` | **Admin** | Full access: Emergency controls, Simulation, Data Seeding |
+| `test2@gmail.com` | `123456` | **User** | Standard attendee: Heatmap, Food, SOS, Navigation |
+
+> **Note**: Admin accounts have access to the **Admin Security Panel** (Settings → Admin Controls) for triggering emergencies, running live crowd simulations, and seeding stadium data.
+
+---
+
+## 🌐 Live Deployment
+**Production URL**: [https://zentry-331594691149.us-central1.run.app](https://zentry-331594691149.us-central1.run.app)
 
 *Built for the future of live experiences.*

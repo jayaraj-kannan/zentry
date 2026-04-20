@@ -6,18 +6,22 @@ import QueueManager from './components/QueueManager';
 import ParkingManager from './components/ParkingManager';
 import ExitScheduler from './components/ExitScheduler';
 import StadiumAssistant from './components/StadiumAssistant';
+import FacilityQueueManager from './components/FacilityQueueManager';
 import EventInteract from './components/EventInteract';
 import Logo from './components/Logo';
 
-import { Activity, ShieldAlert, Home, Map as MapIcon, Ticket, QrCode, Calendar, MapPin, Settings, X, Car, AlertOctagon, HandMetal, MessageSquare, Bot, Sun, Moon, Phone, UserPlus, Save, Loader2 } from 'lucide-react';
+import { Activity, ShieldAlert, Home, Map as MapIcon, Ticket, QrCode, Calendar, MapPin, Settings, X, Car, AlertOctagon, HandMetal, MessageSquare, Bot, Sun, Moon, Phone, UserPlus, Save, Loader2, Flame, Utensils } from 'lucide-react';
 import './queue-styles.css';
 import './ar-styles.css';
 import './emergency-styles.css';
 import { useAuth } from './context/AuthContext';
 import { useStadium } from './context/StadiumContext';
-import { seedInitialData, simulateCrowdDynamics, reportSosAlert } from './firebase/stadiumService';
+import { seedInitialData, simulateCrowdDynamics, reportSosAlert, resolveSosAlert, getActiveUserSos, placeFoodOrder, subscribeToUserOrders, updateFoodOrderStatus } from './firebase/stadiumService';
 import AuthScreen from './components/AuthScreen';
 import { LogOut, Play, Square, Database } from 'lucide-react';
+import { FoodMenuModal, PaymentModal } from './components/FoodOrderModals';
+import NotificationCenter from './components/NotificationCenter';
+import { Bell } from 'lucide-react';
 
 // Mock initial data moved to stadiumService.js for seeding
 const initialZonesData = [
@@ -34,11 +38,61 @@ const initialZonesData = [
 ];
 
 const initialStallsData = [
-  { id: 101, name: 'Chai Kings', type: 'food', waitTime: 5, diet: 'veg', serving: 'Tea, Coffee, Buns & Iced Teas' },
-  { id: 102, name: 'KFC', type: 'food', waitTime: 20, diet: 'non-veg', serving: 'Popcorn Chicken' },
-  { id: 103, name: 'Wow! Momo', type: 'food', waitTime: 12, diet: 'both', serving: 'Hot Momos' },
-  { id: 104, name: 'Domino\'s Pizza', type: 'food', waitTime: 15, diet: 'both', serving: 'Pizzas & Sides' },
-  { id: 105, name: 'Burger King', type: 'food', waitTime: 10, diet: 'both', serving: 'Burgers & Wraps' },
+  { 
+    id: 101, name: 'Chai Kings', type: 'food', waitTime: 5, diet: 'veg', serving: 'Tea, Coffee, Buns & Iced Teas',
+    menu: [
+      { id: 'ck1', name: 'Ginger Chai', price: 45, image: '☕' },
+      { id: 'ck2', name: 'Filter Coffee', price: 50, image: '🥤' },
+      { id: 'ck3', name: 'Bun Maska', price: 60, image: '🍞' },
+      { id: 'ck4', name: 'Samosa (2pcs)', price: 40, image: '🥟' },
+      { id: 'ck5', name: 'Corn Puff', price: 35, image: '🥐' },
+      { id: 'ck6', name: 'Rose Milk', price: 55, image: '🥛' }
+    ]
+  },
+  { 
+    id: 102, name: 'KFC', type: 'food', waitTime: 20, diet: 'non-veg', serving: 'Popcorn Chicken',
+    menu: [
+      { id: 'k1', name: 'Popcorn Chicken', price: 180, image: '🍗' },
+      { id: 'k2', name: 'Zinger Burger', price: 195, image: '🍔' },
+      { id: 'k3', name: 'Hot & Spicy Wings (4)', price: 160, image: '🍗' },
+      { id: 'k4', name: 'Pepsi', price: 60, image: '🥤' },
+      { id: 'k5', name: 'Chicken Strips', price: 150, image: '🍗' },
+      { id: 'k6', name: 'Fries (L)', price: 110, image: '🍟' }
+    ]
+  },
+  { 
+    id: 103, name: 'Wow! Momo', type: 'food', waitTime: 12, diet: 'both', serving: 'Hot Momos',
+    menu: [
+      { id: 'wm1', name: 'Steamed Momos (6)', price: 140, image: '🥟' },
+      { id: 'wm2', name: 'Fried Momos (6)', price: 160, image: '🥟' },
+      { id: 'wm3', name: 'Pan Fried Momos', price: 180, image: '🥟' },
+      { id: 'wm4', name: 'Thums Up', price: 60, image: '🥤' },
+      { id: 'wm5', name: 'Mobo (Momo Burger)', price: 120, image: '🍔' },
+      { id: 'wm6', name: 'Chocolate Momo', price: 90, image: '🍫' }
+    ]
+  },
+  { 
+    id: 104, name: 'Domino\'s Pizza', type: 'food', waitTime: 15, diet: 'both', serving: 'Pizzas & Sides',
+    menu: [
+      { id: 'd1', name: 'Margherita Pizza', price: 220, image: '🍕' },
+      { id: 'd2', name: 'Peppy Paneer Pizza', price: 340, image: '🍕' },
+      { id: 'd3', name: 'Garlic Breadsticks', price: 110, image: '🥖' },
+      { id: 'd4', name: 'Coke', price: 60, image: '🥤' },
+      { id: 'd5', name: 'Choco Lava Cake', price: 100, image: '🍰' },
+      { id: 'd6', name: 'Veggie Paradise', price: 280, image: '🍕' }
+    ]
+  },
+  { 
+    id: 105, name: 'Burger King', type: 'food', waitTime: 10, diet: 'both', serving: 'Burgers & Wraps',
+    menu: [
+      { id: 'bk1', name: 'Whopper Junior', price: 150, image: '🍔' },
+      { id: 'bk2', name: 'Crispy Veg Burger', price: 120, image: '🍔' },
+      { id: 'bk3', name: 'Onion Rings', price: 90, image: '🧅' },
+      { id: 'bk4', name: 'Sprite', price: 60, image: '🥤' },
+      { id: 'bk5', name: 'Veg Whopper', price: 180, image: '🍔' },
+      { id: 'bk6', name: 'Hash Brown', price: 70, image: '🥔' }
+    ]
+  },
   { id: 106, name: 'Pavillion Washroom (M)', type: 'washroom', waitTime: 3 },
   { id: 107, name: 'Level 1 Washroom (W)', type: 'washroom', waitTime: 8 },
   { id: 108, name: 'Main Exit', type: 'exit', waitTime: 15 },
@@ -125,6 +179,7 @@ function App() {
   const [activeTab, setActiveTab] = useState('home');
   const [homeTab, setHomeTab] = useState('live');
   const [isCheckedIn, setIsCheckedIn] = useState(false);
+  const [activeSosId, setActiveSosId] = useState(null);
   const [checkInStatus, setCheckInStatus] = useState('pending'); // pending, scanning, scanned
   const [sosState, setSosState] = useState('idle'); // idle, dispatching, active
   const [sosReason, setSosReason] = useState(null);
@@ -132,6 +187,16 @@ function App() {
   const [showAdminMenu, setShowAdminMenu] = useState(false);
   const [theme, setTheme] = useState(localStorage.getItem('zentry-theme') || 'dark');
   const [showSeatRoute, setShowSeatRoute] = useState(false);
+  
+  // Food Ordering States
+  const [activeOrders, setActiveOrders] = useState([]);
+  const [orderingStall, setOrderingStall] = useState(null);
+  const [showPaymentModal, setShowPaymentModal] = useState(false);
+  const [cart, setCart] = useState([]);
+
+  // Notification States
+  const [notifications, setNotifications] = useState([]);
+  const [showNotifications, setShowNotifications] = useState(false);
 
   // Remapped constants to context values
   const userParkingId = 2; // Fixed for demo
@@ -140,6 +205,121 @@ function App() {
   useEffect(() => {
     localStorage.setItem('zentry-theme', theme);
   }, [theme]);
+
+  // Persistent SOS Restoration Logic
+  useEffect(() => {
+    const restoreSos = async () => {
+      if (user) {
+        const activeSos = await getActiveUserSos(user.uid);
+        if (activeSos) {
+          setSosState('active');
+          setActiveSosId(activeSos.id);
+          setSosReason(activeSos.reason);
+          setCurrentAlert({ 
+            message: `Security Dispatched for ${activeSos.reason}! Personnel are on the way. ETA: 45s.`, 
+            persistent: true 
+          });
+        }
+      }
+    };
+    restoreSos();
+  }, [user]);
+
+  // Real-time Orders Subscription
+  useEffect(() => {
+    if (user) {
+      const unsubscribe = subscribeToUserOrders(user.uid, (orders) => {
+        // Check for new 'ready' orders to notify
+        orders.forEach(order => {
+          if (order.status === 'ready') {
+            const notifId = `order-ready-${order.id}`;
+            if (!notifications.some(n => n.id === notifId)) {
+              addNotification(
+                'food',
+                'Your Order is Ready! ✨',
+                `${order.stallName}: ${order.items.map(i => i.name).join(', ')} is waiting for pickup.`,
+                { tab: 'food' },
+                notifId
+              );
+            }
+          }
+        });
+        setActiveOrders(orders);
+      });
+      return () => unsubscribe();
+    }
+  }, [user, notifications]);
+
+  const addNotification = (type, title, message, action = null, customId = null) => {
+    const id = customId || Date.now();
+    if (!notifications.some(n => n.id === id)) {
+      setNotifications(prev => [{
+        id, type, title, message, action,
+        time: Date.now(),
+        read: false
+      }, ...prev]);
+    }
+  };
+
+  const handleNotificationAction = (notif) => {
+    // Mark as read
+    setNotifications(prev => prev.map(n => n.id === notif.id ? { ...n, read: true } : n));
+    
+    // Execute action
+    if (notif.action?.tab) {
+      setActiveTab(notif.action.tab);
+    }
+    
+    setShowNotifications(false);
+  };
+
+  const handleStartOrder = (stall) => {
+    setOrderingStall(stall);
+    setCart([]);
+  };
+
+  const handleConfirmOrder = async (paymentMethod) => {
+    if (!user || cart.length === 0) return;
+
+    try {
+      const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
+      const orderData = {
+        userId: user.uid,
+        userName: user.displayName || 'Guest',
+        stallId: orderingStall.id,
+        stallName: orderingStall.name,
+        items: cart,
+        total,
+        paymentMethod
+      };
+
+      const orderId = await placeFoodOrder(orderData);
+      
+      setOrderingStall(null);
+      setCart([]);
+      setShowPaymentModal(false);
+      setCurrentAlert({ message: "Order placed successfully! Tracking active." });
+
+      // Simulate order becoming ready after 15 seconds
+      setTimeout(async () => {
+        await updateFoodOrderStatus(orderId, 'ready');
+      }, 15000);
+
+    } catch (error) {
+      console.error("Order failed:", error);
+      setCurrentAlert({ message: "Failed to place order." });
+    }
+  };
+
+  const handleClearOrder = async (orderId) => {
+    try {
+      await updateFoodOrderStatus(orderId, 'picked_up');
+      setCurrentAlert({ message: "Order picked up successfully. Enjoy!" });
+    } catch (error) {
+      console.error("Failed to clear order:", error);
+      setCurrentAlert({ message: "Failed to clear order." });
+    }
+  };
 
   const toggleTheme = () => {
     setTheme(prev => prev === 'dark' ? 'light' : 'dark');
@@ -157,7 +337,9 @@ function App() {
     setIsEmergency(true);
     setActiveTab('home');
     setShowAdminMenu(false);
-    setCurrentAlert({ message: `🚨 EMERGENCY ALERT: ${type} initiated!`, persistent: true });
+    const msg = `🚨 EMERGENCY ALERT: ${type} initiated!`;
+    setCurrentAlert({ message: msg, persistent: true });
+    addNotification('emergency', 'CRITICAL ALERT', msg, { tab: 'home' });
   };
 
   const cancelEmergency = () => {
@@ -172,7 +354,9 @@ function App() {
     setIsExitPhase(true);
     setActiveTab('home');
     setShowAdminMenu(false);
-    setCurrentAlert({ message: "Phased Exit Protocol initiated. Please check your assigned slot.", persistent: true });
+    const msg = "Phased Exit Protocol initiated. Please check your assigned slot.";
+    setCurrentAlert({ message: msg, persistent: true });
+    addNotification('info', 'Exit Protocol Started', msg, { tab: 'home' });
   };
 
   const handleSOS = () => {
@@ -191,15 +375,31 @@ function App() {
 
     // Report to Firestore for Cloud Function dispatching
     try {
-      await reportSosAlert(user.uid, user.email, type);
+      const alertId = await reportSosAlert(user.uid, user.email, type);
+      setActiveSosId(alertId);
     } catch (error) {
       console.error("Failed to sync SOS to cloud:", error);
     }
 
     setTimeout(() => {
       setSosState('active');
-      setCurrentAlert({ message: `Security Dispatched for ${type}! Personnel are on the way. ETA: 45s.`, persistent: true });
+      const msg = `Security Dispatched for ${type}! Personnel are on the way. ETA: 45s.`;
+      setCurrentAlert({ message: msg, persistent: true });
+      addNotification('emergency', 'Security Dispatched', msg, { tab: 'home' });
     }, 4000);
+
+    addNotification('emergency', 'SOS Initiated', `Your SOS for ${type} has been received. Locating you now...`, { tab: 'home' });
+  };
+
+  const handleResolveSOS = async (status = 'resolved') => {
+    if (activeSosId) {
+      await resolveSosAlert(activeSosId, status);
+    }
+    setSosState('idle');
+    setSosReason(null);
+    setActiveSosId(null);
+    setCurrentAlert(null);
+    addNotification('info', 'SOS Resolved', 'Emergency responder status cleared.', { tab: 'home' });
   };
 
   const handleShowQR = () => {
@@ -247,9 +447,9 @@ function App() {
       const clearGate = zones.find(z => z.type === 'gate' && z.status === 'clear');
 
       if (congestedGate && clearGate) {
-        setCurrentAlert({
-          message: `${congestedGate.name} is currently very crowded. Please use ${clearGate.name} for faster entry.`
-        });
+        const msg = `${congestedGate.name} is currently very crowded. Please use ${clearGate.name} for faster entry.`;
+        setCurrentAlert({ message: msg });
+        addNotification('info', 'Stadium Traffic Alert', msg);
       }
     }, 6000);
 
@@ -264,6 +464,7 @@ function App() {
           message: "⚠️ AI Alert: Sudden abnormal crowd surge detected near Gate 5. Auto-monitoring active.",
           persistent: true
         });
+        addNotification('info', 'AI Security Alert', 'Sudden abnormal crowd surge detected near Gate 5. Auto-monitoring active.');
       }, 15000);
       return () => clearTimeout(aiTimer);
     }
@@ -300,6 +501,17 @@ function App() {
           >
             {theme === 'dark' ? <Sun size={20} aria-hidden="true" /> : <Moon size={20} aria-hidden="true" />}
           </button>
+          
+          <button
+            onClick={() => setShowNotifications(true)}
+            style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)', cursor: 'pointer', display: 'flex', alignItems: 'center', padding: '4px', position: 'relative' }}
+          >
+            <Bell size={22} />
+            {notifications.filter(n => !n.read).length > 0 && (
+              <span style={{ position: 'absolute', top: '0', right: '0', width: '10px', height: '10px', background: '#ef4444', borderRadius: '50%', border: '2px solid var(--bg-dark)' }} />
+            )}
+          </button>
+
           <button
             className="settings-trigger"
             onClick={() => setShowAdminMenu(true)}
@@ -310,6 +522,95 @@ function App() {
           </button>
         </div>
       </header>
+
+      {showSOSOptions && (
+        <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.9)', zIndex: 2000, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setShowSOSOptions(false)}>
+          <div 
+            style={{ 
+              background: 'var(--bg-dark)', 
+              width: '100%', 
+              maxWidth: '500px', 
+              borderTopLeftRadius: '24px', 
+              borderTopRightRadius: '24px', 
+              padding: '24px',
+              border: '1px solid var(--card-border)',
+              boxShadow: '0 -10px 40px rgba(0,0,0,0.5)'
+            }}
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+              <h2 style={{ fontSize: '1.4rem', fontWeight: 'bold', color: 'var(--status-congested)', margin: 0, display: 'flex', alignItems: 'center', gap: '10px' }}>
+                <AlertOctagon size={24} /> Emergency SOS
+              </h2>
+              <button onClick={() => setShowSOSOptions(false)} style={{ background: 'transparent', border: 'none', color: 'var(--text-muted)' }}>
+                <X size={24} />
+              </button>
+            </div>
+            
+            <p style={{ color: 'var(--text-muted)', marginBottom: '20px', fontSize: '0.9rem' }}>Choose your emergency type. Security and medical teams will use your GPS to find you immediately.</p>
+            
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px' }}>
+              <button 
+                onClick={() => submitUserSOS('Medical')}
+                style={{ padding: '16px', background: 'rgba(239, 68, 68, 0.1)', border: '1px solid #ef4444', borderRadius: '16px', color: '#ef4444', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
+              >
+                <Activity size={32} />
+                <span style={{ fontWeight: 'bold' }}>Medical</span>
+              </button>
+              <button 
+                onClick={() => submitUserSOS('Security')}
+                style={{ padding: '16px', background: 'rgba(59, 130, 246, 0.1)', border: '1px solid var(--primary)', borderRadius: '16px', color: 'var(--primary)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
+              >
+                <ShieldAlert size={32} />
+                <span style={{ fontWeight: 'bold' }}>Security</span>
+              </button>
+              <button 
+                onClick={() => submitUserSOS('Fire')}
+                style={{ padding: '16px', background: 'rgba(249, 115, 22, 0.1)', border: '1px solid #f97316', borderRadius: '16px', color: '#f97316', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
+              >
+                <Flame size={32} />
+                <span style={{ fontWeight: 'bold' }}>Fire</span>
+              </button>
+              <button 
+                onClick={() => submitUserSOS('Other')}
+                style={{ padding: '16px', background: 'rgba(255, 255, 255, 0.05)', border: '1px solid var(--card-border)', borderRadius: '16px', color: 'var(--text-main)', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px', cursor: 'pointer' }}
+              >
+                <Activity size={32} />
+                <span style={{ fontWeight: 'bold' }}>Other</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Food Ordering Modals */}
+      {orderingStall && (
+        <FoodMenuModal 
+          stall={orderingStall}
+          cart={cart}
+          setCart={setCart}
+          onCheckout={() => setShowPaymentModal(true)}
+          onClose={() => setOrderingStall(null)}
+        />
+      )}
+
+      {showPaymentModal && (
+        <PaymentModal 
+          total={cart.reduce((sum, item) => sum + (item.price * item.quantity), 0)}
+          onConfirm={handleConfirmOrder}
+          onClose={() => setShowPaymentModal(false)}
+        />
+      )}
+
+      {showNotifications && (
+        <NotificationCenter 
+          notifications={notifications}
+          onClose={() => setShowNotifications(false)}
+          onClearAll={() => setNotifications([])}
+          onMarkRead={(id) => setNotifications(prev => prev.map(n => n.id === id ? { ...n, read: true } : n))}
+          onAction={handleNotificationAction}
+        />
+      )}
 
       {showAdminMenu && (
         <div style={{ position: 'fixed', inset: 0, background: 'rgba(0,0,0,0.8)', zIndex: 1000, display: 'flex', alignItems: 'flex-end', justifyContent: 'center' }} onClick={() => setShowAdminMenu(false)}>
@@ -531,12 +832,22 @@ function App() {
               </div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{sosState !== 'idle' ? 'Personnel are tracking your location. Stay where you are.' : 'Follow safe route to Gate 2 (Pavillion)'}</span>
-                <button
-                  onClick={() => handleNavigation('Gate 2 (Pavillion)')}
-                  style={{ background: '#ef4444', color: 'var(--text-inverse)', border: 'none', padding: '6px 12px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 2px 10px rgba(239, 68, 68, 0.4)' }}
-                >
-                  {sosState !== 'idle' ? 'Your Location' : 'Evacuation Route'}
-                </button>
+                <div style={{ display: 'flex', gap: '8px' }}>
+                  {(sosState === 'active' || sosState === 'dispatching') && (
+                    <button
+                      onClick={() => handleResolveSOS(sosState === 'active' ? 'resolved' : 'revoked')}
+                      style={{ background: sosState === 'active' ? 'var(--status-clear)' : 'rgba(255,255,255,0.1)', color: 'var(--text-main)', border: '1px solid var(--card-border)', padding: '6px 12px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer' }}
+                    >
+                      {sosState === 'active' ? 'Mark Resolved' : 'Revoke SOS'}
+                    </button>
+                  )}
+                  <button
+                    onClick={() => handleNavigation('Gate 2 (Pavillion)')}
+                    style={{ background: '#ef4444', color: 'var(--text-inverse)', border: 'none', padding: '6px 12px', borderRadius: '8px', fontWeight: 'bold', cursor: 'pointer', boxShadow: '0 2px 10px rgba(239, 68, 68, 0.4)' }}
+                  >
+                    {sosState !== 'idle' ? 'Your Location' : 'Evacuation Route'}
+                  </button>
+                </div>
               </div>
             </div>
           </div>
@@ -565,20 +876,20 @@ function App() {
                       {isCheckedIn ? 'Status' : 'Event Info'}
                     </button>
                     {isCheckedIn && (
-                      <button
-                        style={{ flex: 1, padding: '10px 4px', border: 'none', borderRadius: '10px', background: homeTab === 'interact' ? 'rgba(59, 130, 246, 0.2)' : 'transparent', color: homeTab === 'interact' ? 'var(--primary)' : 'var(--text-muted)', fontWeight: '600', transition: 'all 0.2s', cursor: 'pointer', fontSize: '0.8rem' }}
-                        onClick={() => setHomeTab('interact')}
-                      >
-                        Interact
-                      </button>
-                    )}
-                    {isCheckedIn && (
-                      <button
-                        style={{ flex: 1, padding: '10px 4px', border: 'none', borderRadius: '10px', background: homeTab === 'queue' ? 'rgba(59, 130, 246, 0.2)' : 'transparent', color: homeTab === 'queue' ? 'var(--primary)' : 'var(--text-muted)', fontWeight: '600', transition: 'all 0.2s', cursor: 'pointer', fontSize: '0.8rem' }}
-                        onClick={() => setHomeTab('queue')}
-                      >
-                        Queue
-                      </button>
+                      <>
+                        <button
+                          style={{ flex: 1, padding: '10px 4px', border: 'none', borderRadius: '10px', background: homeTab === 'interact' ? 'rgba(59, 130, 246, 0.2)' : 'transparent', color: homeTab === 'interact' ? 'var(--primary)' : 'var(--text-muted)', fontWeight: '600', transition: 'all 0.2s', cursor: 'pointer', fontSize: '0.8rem' }}
+                          onClick={() => setHomeTab('interact')}
+                        >
+                          Interact
+                        </button>
+                        <button
+                          style={{ flex: 1, padding: '10px 4px', border: 'none', borderRadius: '10px', background: homeTab === 'queue' ? 'rgba(59, 130, 246, 0.2)' : 'transparent', color: homeTab === 'queue' ? 'var(--primary)' : 'var(--text-muted)', fontWeight: '600', transition: 'all 0.2s', cursor: 'pointer', fontSize: '0.8rem' }}
+                          onClick={() => setHomeTab('queue')}
+                        >
+                          Queue
+                        </button>
+                      </>
                     )}
                     <button
                       style={{ flex: 1, padding: '10px 4px', border: 'none', borderRadius: '10px', background: homeTab === 'parking' ? 'rgba(59, 130, 246, 0.2)' : 'transparent', color: homeTab === 'parking' ? 'var(--primary)' : 'var(--text-muted)', fontWeight: '600', transition: 'all 0.2s', cursor: 'pointer', fontSize: '0.8rem' }}
@@ -612,7 +923,11 @@ function App() {
                       <Dashboard zones={zones} onNavigate={handleNavigation} />
                     )
                   )}
-                  {homeTab === 'queue' && <QueueManager stalls={stalls} onNavigate={handleNavigation} />}
+                  {homeTab === 'queue' && (
+                    <section style={{ padding: '0 1rem' }}>
+                      <FacilityQueueManager stalls={stalls} onNavigate={handleNavigation} />
+                    </section>
+                  )}
                   {homeTab === 'parking' && <ParkingManager parkingLots={parkingLots} onNavigate={handleNavigation} isCheckedIn={isCheckedIn} userParkingId={2} zones={zones} />}
                   {homeTab === 'interact' && <EventInteract />}
                 </section>
@@ -627,9 +942,15 @@ function App() {
           </>
         )}
 
-        {activeTab === 'routes' && (
+        {activeTab === 'food' && (
           <section className="queue-section" style={{ padding: '1rem' }}>
-            <QueueManager stalls={stalls} onNavigate={handleNavigation} />
+            <QueueManager 
+              stalls={stalls} 
+              onNavigate={handleNavigation} 
+              onOrder={handleStartOrder}
+              onClearOrder={handleClearOrder}
+              activeOrders={activeOrders}
+            />
           </section>
         )}
 
@@ -753,6 +1074,14 @@ function App() {
             <Home size={22} aria-hidden="true" />
             <span>Home</span>
           </button>
+          <button 
+            className={`nav-item ${activeTab === 'food' ? 'active' : ''}`} 
+            onClick={() => setActiveTab('food')}
+            aria-label="Food Corner"
+          >
+            <Utensils size={22} aria-hidden="true" />
+            <span>Food</span>
+          </button>
           {isCheckedIn && (
             <>
               <button
@@ -821,7 +1150,7 @@ function App() {
                 { id: 'medical', label: 'Medical', icon: <Activity size={20} />, color: '#ef4444' },
                 { id: 'security', label: 'Security', icon: <ShieldAlert size={20} />, color: '#f59e0b' },
                 { id: 'harassment', label: 'Harassment', icon: <HandMetal size={20} />, color: '#3b82f6' },
-                { id: 'fire', label: 'Fire', icon: <Activity size={20} />, color: '#ef4444' },
+                { id: 'fire', label: 'Fire', icon: <Flame size={20} />, color: '#ef4444' },
                 { id: 'child', label: 'Lost Person', icon: <MapPin size={20} />, color: '#10b981' },
                 { id: 'other', label: 'Other', icon: <AlertOctagon size={20} />, color: 'var(--text-muted)' }
               ].map(opt => (

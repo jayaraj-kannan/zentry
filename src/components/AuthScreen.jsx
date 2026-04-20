@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Mail, Lock, User, Github, Chrome, ArrowRight, Loader2, Sparkles, ShieldCheck } from 'lucide-react';
+import { Mail, Lock, User, Chrome, ArrowRight, Loader2, Sparkles, ShieldCheck } from 'lucide-react';
 
 const AuthScreen = () => {
     const [isLogin, setIsLogin] = useState(true);
@@ -128,14 +128,10 @@ const AuthScreen = () => {
                         <span>OR CONTINUE WITH</span>
                     </div>
 
-                    <div className="social-auth-grid">
-                        <button onClick={handleGoogleLogin} className="social-btn google" disabled={loading}>
+                    <div className="social-auth-grid" style={{ display: 'flex', justifyContent: 'center' }}>
+                        <button onClick={handleGoogleLogin} className="social-btn google" disabled={loading} style={{ flex: '0 1 100%', maxWidth: '100%' }}>
                             <Chrome size={20} />
-                            <span>Google</span>
-                        </button>
-                        <button className="social-btn github" disabled={true} title="Coming soon">
-                            <Github size={20} />
-                            <span>GitHub</span>
+                            <span>Continue with Google</span>
                         </button>
                     </div>
 

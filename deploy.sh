@@ -17,7 +17,7 @@ fi
 echo "🏗️  Starting Cloud Build for $PROJECT_ID..."
 
 gcloud builds submit --config cloudbuild.yaml \
-  --substitutions="_VITE_FIREBASE_API_KEY=$(grep VITE_FIREBASE_API_KEY .env | cut -d '=' -f2)","_VITE_FIREBASE_AUTH_DOMAIN=$(grep VITE_FIREBASE_AUTH_DOMAIN .env | cut -d '=' -f2)","_VITE_FIREBASE_PROJECT_ID=$(grep VITE_FIREBASE_PROJECT_ID .env | cut -d '=' -f2)","_VITE_FIREBASE_STORAGE_BUCKET=$(grep VITE_FIREBASE_STORAGE_BUCKET .env | cut -d '=' -f2)","_VITE_FIREBASE_MESSAGING_SENDER_ID=$(grep VITE_FIREBASE_MESSAGING_SENDER_ID .env | cut -d '=' -f2)","_VITE_FIREBASE_APP_ID=$(grep VITE_FIREBASE_APP_ID .env | cut -d '=' -f2)","_VITE_GEMINI_API_KEY=$(grep VITE_GEMINI_API_KEY .env | cut -d '=' -f2)" \
+  --substitutions="_VITE_FIREBASE_API_KEY=$(grep VITE_FIREBASE_API_KEY .env | cut -d '=' -f2)","_VITE_FIREBASE_AUTH_DOMAIN=$(grep VITE_FIREBASE_AUTH_DOMAIN .env | cut -d '=' -f2)","_VITE_FIREBASE_PROJECT_ID=$(grep VITE_FIREBASE_PROJECT_ID .env | cut -d '=' -f2)","_VITE_FIREBASE_STORAGE_BUCKET=$(grep VITE_FIREBASE_STORAGE_BUCKET .env | cut -d '=' -f2)","_VITE_FIREBASE_MESSAGING_SENDER_ID=$(grep VITE_FIREBASE_MESSAGING_SENDER_ID .env | cut -d '=' -f2)","_VITE_FIREBASE_APP_ID=$(grep VITE_FIREBASE_APP_ID .env | cut -d '=' -f2)","_VITE_GEMINI_API_KEY=$(grep VITE_GEMINI_API_KEY .env | cut -d '=' -f2)","_VITE_GOOGLE_MAPS_API_KEY=$(grep VITE_GOOGLE_MAPS_API_KEY .env | cut -d '=' -f2)" \
   .
 
 if [ $? -eq 0 ]; then

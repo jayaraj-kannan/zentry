@@ -4,9 +4,14 @@ import {
   doc, 
   setDoc, 
   updateDoc, 
+  addDoc,
   getDocs,
   query,
-  limit 
+  limit,
+  where,
+  orderBy,
+  onSnapshot,
+  serverTimestamp
 } from 'firebase/firestore';
 
 /**
@@ -77,7 +82,93 @@ export const reportSosAlert = async (userId, userEmail, reason) => {
     userId,
     userEmail,
     reason,
+    status: 'active',
     timestamp: new Date().toISOString()
   });
   return alertRef.id;
+};
+
+/**
+ * Mark an SOS alert as resolved
+ */
+export const resolveSosAlert = async (alertId, status = 'resolved') => {
+  if (!alertId) return;
+  const alertRef = doc(db, 'sos_alerts', alertId);
+  await updateDoc(alertRef, {
+    status: status,
+    resolvedAt: new Date().toISOString()
+  });
+};
+
+/**
+ * Fetch the most recent active SOS alert for a user
+ */
+export const getActiveUserSos = async (userId) => {
+  if (!userId) return null;
+  // Use a simpler query that doesn't require composite indexes
+  const q = query(
+    collection(db, 'sos_alerts'),
+    where('userId', '==', userId)
+  );
+  
+  const querySnapshot = await getDocs(q);
+  if (querySnapshot.empty) return null;
+
+  // Filter and sort in memory to avoid index requirements
+  const activeAlerts = querySnapshot.docs
+    .map(doc => ({ id: doc.id, ...doc.data() }))
+    .filter(alert => alert.status === 'active')
+    .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+  return activeAlerts.length > 0 ? activeAlerts[0] : null;
+};
+
+/**
+ * Place a new food order
+ */
+export const placeFoodOrder = async (orderData) => {
+  const orderRef = collection(db, 'food_orders');
+  const newOrder = {
+    ...orderData,
+    status: 'pending', // pending, ready, picked_up
+    timestamp: serverTimestamp()
+  };
+  const docRef = await addDoc(orderRef, newOrder);
+  return docRef.id;
+};
+
+/**
+ * Subscribe to a user's active food orders
+ */
+export const subscribeToUserOrders = (userId, callback) => {
+  if (!userId) return () => {};
+  
+  // Basic query to avoid composite index requirements
+  const q = query(
+    collection(db, 'food_orders'),
+    where('userId', '==', userId)
+  );
+
+  return onSnapshot(q, (snapshot) => {
+    const orders = snapshot.docs
+      .map(doc => ({ id: doc.id, ...doc.data() }))
+      // Filter 'pending' and 'ready' in memory
+      .filter(order => ['pending', 'ready'].includes(order.status))
+      // Sort by timestamp desc in memory
+      .sort((a, b) => {
+        const timeA = a.timestamp?.seconds || 0;
+        const timeB = b.timestamp?.seconds || 0;
+        return timeB - timeA;
+      });
+      
+    callback(orders);
+  });
+};
+
+/**
+ * Update a food order status (e.g., to 'ready')
+ */
+export const updateFoodOrderStatus = async (orderId, status) => {
+  if (!orderId) return;
+  const orderRef = doc(db, 'food_orders', orderId);
+  await updateDoc(orderRef, { status });
 };

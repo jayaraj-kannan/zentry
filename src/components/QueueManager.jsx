@@ -1,9 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { Timer, Utensils, CheckCircle, Coffee, Droplets, MapPin } from 'lucide-react';
+import { Timer, Utensils, CheckCircle, Coffee, Droplets, MapPin, Activity } from 'lucide-react';
 
-const QueueManager = ({ stalls, onNavigate }) => {
-  const [orderedStall, setOrderedStall] = useState(null);
-
+const QueueManager = ({ stalls, onNavigate, onOrder, onClearOrder, activeOrders = [] }) => {
   // Separate stalls by type
   const foodStalls = stalls.filter(s => s.type === 'food');
   const washrooms = stalls.filter(s => s.type === 'washroom');
@@ -11,13 +9,6 @@ const QueueManager = ({ stalls, onNavigate }) => {
 
   // Find fastest food
   const fastestFood = [...foodStalls].sort((a, b) => a.waitTime - b.waitTime)[0];
-
-  const handlePreOrder = (stallId) => {
-    setOrderedStall(stallId);
-    setTimeout(() => {
-      setOrderedStall(null);
-    }, 4000); // clear after 4s
-  };
 
   return (
     <div className="queue-manager mt-4">
@@ -33,8 +24,54 @@ const QueueManager = ({ stalls, onNavigate }) => {
         )}
       </div>
 
+      {/* ACTIVE ORDERS TRACKING */}
+      {activeOrders.length > 0 && (
+        <div className="status-section mb-6">
+          <h3 style={{ display: 'flex', alignItems: 'center', gap: '8px', color: 'var(--primary)' }}>
+            <Activity size={18} /> MY ACTIVE ORDERS
+          </h3>
+          <div className="gate-list mt-2">
+            {activeOrders.map(order => (
+              <div key={order.id} className="status-item" style={{ borderLeft: `4px solid ${order.status === 'ready' ? 'var(--status-clear)' : 'var(--primary)'}`, background: 'rgba(255,255,255,0.03)' }}>
+                <div className="item-info">
+                  <span className="item-name" style={{ fontWeight: 'bold' }}>{order.stallName}</span>
+                  <div style={{ display: 'flex', flexDirection: 'column' }}>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+                      {order.items.map(i => i.name).join(', ')}
+                    </span>
+                    <span style={{ fontSize: '0.75rem', fontWeight: 'bold', color: order.status === 'ready' ? 'var(--status-clear)' : 'var(--primary)', marginTop: '4px' }}>
+                      {order.status === 'ready' ? '✨ READY FOR PICKUP' : '⌛ PREPARING...'}
+                    </span>
+                  </div>
+                </div>
+                {order.status === 'ready' && (
+                  <div style={{ display: 'flex', gap: '8px' }}>
+                    <button 
+                      className="nav-btn" 
+                      onClick={() => onNavigate(order.stallName)}
+                      style={{ background: 'var(--status-clear)', color: 'white' }}
+                      title="Navigate to Stall"
+                    >
+                      <MapPin size={14} />
+                    </button>
+                    <button 
+                      className="nav-btn" 
+                      onClick={() => onClearOrder(order.id)}
+                      style={{ background: 'var(--primary)', color: 'white' }}
+                      title="Mark as Picked Up"
+                    >
+                      <CheckCircle size={14} />
+                    </button>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="status-section">
-        <h3>Food Counters</h3>
+        <h3 style={{ borderBottom: '1px solid var(--card-border)', paddingBottom: '8px' }}>Food Corner Counters</h3>
         <div className="gate-list mt-2">
           {foodStalls.map(stall => (
             <div key={stall.id} className="status-item">
@@ -66,43 +103,6 @@ const QueueManager = ({ stalls, onNavigate }) => {
               </div>
               
               <div className="action-btn-wrapper">
-                {orderedStall === stall.id ? (
-                  <button className="preorder-btn success" disabled>
-                    <CheckCircle size={14} /> Confirmed!
-                  </button>
-                ) : (
-                  <>
-                    <button 
-                      className="nav-btn" 
-                      onClick={() => onNavigate(stall.name)}
-                      aria-label={`Navigate to ${stall.name}`}
-                    >
-                      <MapPin size={14} aria-hidden="true" />
-                    </button>
-                    <button className="preorder-btn" onClick={() => handlePreOrder(stall.id)}>
-                      Pre-Order
-                    </button>
-                  </>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="status-section mt-4">
-        <h3>Washroom Queues</h3>
-        <div className="gate-list mt-2">
-          {washrooms.map(stall => (
-            <div key={stall.id} className="status-item">
-              <span className="item-name" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <Droplets size={16} color="var(--text-muted)" />
-                {stall.name}
-              </span>
-              <div className="action-btn-wrapper">
-                <span className="wait-time" style={{ color: stall.waitTime > 10 ? 'var(--status-congested)' : stall.waitTime > 5 ? 'var(--status-moderate)' : 'var(--status-clear)', fontWeight: '600' }}>
-                  {stall.waitTime} min
-                </span>
                 <button 
                   className="nav-btn" 
                   onClick={() => onNavigate(stall.name)}
@@ -110,27 +110,12 @@ const QueueManager = ({ stalls, onNavigate }) => {
                 >
                   <MapPin size={14} aria-hidden="true" />
                 </button>
-              </div>
-            </div>
-          ))}
-        </div>
-      </div>
-
-      <div className="status-section mt-4">
-        <h3>Exit Queues</h3>
-        <div className="gate-list mt-2">
-          {exits.map(stall => (
-            <div key={stall.id} className="status-item">
-              <span className="item-name" style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                <MapPin size={16} color="var(--text-muted)" />
-                {stall.name}
-              </span>
-              <div className="action-btn-wrapper">
-                <span className="wait-time" style={{ color: stall.waitTime > 10 ? 'var(--status-congested)' : stall.waitTime > 5 ? 'var(--status-moderate)' : 'var(--status-clear)', fontWeight: '600' }}>
-                  {stall.waitTime} min
-                </span>
-                <button className="nav-btn" onClick={() => onNavigate(stall.name)}>
-                  <MapPin size={14} />
+                <button 
+                  className="preorder-btn" 
+                  onClick={() => onOrder(stall)}
+                  style={{ background: 'var(--primary)', color: 'white' }}
+                >
+                  Order
                 </button>
               </div>
             </div>
