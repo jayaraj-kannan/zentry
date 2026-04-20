@@ -48,8 +48,11 @@ The system relies on a **Centralized Live Event State**:
 - **Multilingual Support**: Fully functional in **English, Tamil, and Hindi**.
 - **Deep-Linking**: Direct navigation to "Nearest Exit," "Shortest Food Queue," or "Restrooms."
 
-### 2. 📊 Smart Crowd Heatmap
+### 2. 📊 Smart Crowd Heatmap + Satellite View
 - **Density States**: Clear, Moderate, and Congested zones updated in real-time.
+- **Google Maps Satellite Overlay**: Toggle between SVG schematic and live satellite view of M.A. Chidambaram Stadium.
+- **Live Density Markers**: Pulsating `OverlayView` markers on the satellite map showing zone-wise crowd density percentages.
+- **Contextual Indicators**: Seat location, user position ("You"), exit gates, and emergency markers render on both views.
 
 ### 3. 🎸 Interactive Fan Engagement
 - **Live Audience Polls**: Animated feedback loops for real-time engagement.
@@ -58,6 +61,28 @@ The system relies on a **Centralized Live Event State**:
 ### 4. 🚨 Emergency SOS Portal
 - **Global Status Banner**: Visible across all tabs during emergencies.
 - **AI Dispatch**: Automatic security response simulation.
+
+### 5. 🍕 Food & Beverage Ordering
+- **Live Queue Times**: Real-time wait estimates for food stalls across concourses.
+- **Order Flow**: Browse menu → place order → track preparation with animated status.
+- **Smart Routing**: AI assistant directs fans to the shortest food queue.
+
+### 6. 🅿️ Smart Parking Manager
+- **Real-Time Lot Status**: Color-coded parking zone availability.
+- **Booking System**: Reserve spots with confirmation flow.
+- **Navigation**: Direct deep-link to parking location.
+
+### 7. 🔔 Notification Center
+- **Multi-Category Alerts**: SOS updates, event announcements, crowd advisories.
+- **Priority Indicators**: Urgency-coded notifications with timestamps.
+
+### 8. 🚪 Exit Scheduler
+- **Staggered Exit**: Phase-based crowd dispersal to prevent stampedes.
+- **Gate Assignments**: Personalized exit gates with estimated clear times.
+
+### 9. 🔐 Authentication & RBAC
+- **Firebase Auth**: Email/password and **Google Sign-In** (OAuth 2.0).
+- **Role-Based Access**: Admin-only controls for emergency triggers, data seeding, and simulations.
 
 ## 🏗️ Technical Implementation & Logic Flows
 
@@ -70,7 +95,19 @@ Zentry doesn't just "chat"; it command-and-controls the UI based on natural lang
     4.  The frontend maps this to a direct Google Maps deep-link or a UI tab switch.
 - **Implementation**: Uses a robust keyword-intent mapping combined with Google Gemini for context-aware parsing.
 
-### 2. SOS Emergency Lifecycle
+### 2. Google Maps Satellite Integration
+Real-time crowd density visualization over actual satellite imagery.
+- **The Flow**:
+    1.  `HeatMap.jsx` initializes the Google Maps JS API via `useJsApiLoader` with `@react-google-maps/api`.
+    2.  SVG coordinate space (0–800) is mapped to GPS coordinates using linear transformation: `svgToGps(x, y)`.
+    3.  Zone density data from Firestore (`StadiumContext`) is rendered as `OverlayView` pulse markers on the satellite map.
+    4.  Markers dynamically change color (green → yellow → red), pulse speed, and size based on real-time density percentages.
+- **Key Constants**:
+    - Stadium Center: `13.0627°N, 80.2794°E` (M.A. Chidambaram Stadium, Chennai)
+    - Scale: `SCALE_LAT = 0.0000022`, `SCALE_LNG = 0.0000024` (~200m stadium diameter)
+- **Implementation**: Uses `GoogleMap` component with `satellite` mapTypeId, custom `OverlayView` markers, and CSS `@keyframes densityPulse` animation.
+
+### 3. SOS Emergency Lifecycle
 A mission-critical flow that synchronizes the stadium during a crisis.
 - **The Flow**:
     1.  **Trigger**: User taps "Medical SOS" in the emergency portal.
@@ -80,14 +117,14 @@ A mission-critical flow that synchronizes the stadium during a crisis.
     5.  **Global Feedback**: All active devices listen to the `stadium_status` change, triggering the red **Global Emergency Banner** across the app.
 - **Implementation**: Firebase Cloud Functions (v2) handle the escalation logic to keep client-side code lightweight.
 
-### 3. Real-Time Crowd Density Lifecycle
+### 4. Real-Time Crowd Density Lifecycle
 - **The Flow**:
     1.  **Data Ingestion**: Simulated gate-entry sensors pipe density values (0-100) into Firestore.
     2.  **Context Propagation**: `StadiumContext.jsx` subscribes to these updates via `onSnapshot`.
-    3.  **Visual Render**: The `HeatMap.jsx` component receives the raw data and translates it into dynamic HSL color values and CSS-puling animations.
+    3.  **Visual Render**: The `HeatMap.jsx` component receives the raw data and translates it into dynamic HSL color values and CSS-pulsing animations on both SVG and satellite views.
 - **Implementation**: Uses Firestore's real-time listeners for sub-second synchronization across the attendee pool.
 
-### 4. Role-Based Access Flow (RBAC)
+### 5. Role-Based Access Flow (RBAC)
 - **The Flow**:
     1.  **Auth**: User logs in; Firestore `users` document is fetched.
     2.  **Logic**: `AuthContext.jsx` checks for a `role: 'admin'` attribute.
@@ -119,26 +156,39 @@ Zentry is built to be usable by every fan in the stadium:
 ### 🌐 4. Google Services Ecosystem
 Zentry leverages the best of Google's cloud and AI technology:
 - **Firebase Platform**: Provides the real-time backbone (Firestore), secure identity (Auth), and serverless logic (Functions).
-- **Google Maps Integration**: Direct deep-linking for precinct-specific navigation to food, exits, and restrooms.
+- **Google Maps JavaScript API**: Powers the satellite heatmap overlay with real-time `OverlayView` density markers and contextual gate/user indicators.
 - **Gemini (Google AI)**: Powers the conversational intelligence that translates attendee questions into actionable UI commands.
 
 ---
 
 ## 🛠️ Technology Stack
-- **Frontend**: React (Vite)
-- **Backend**: Firebase (Auth, Firestore, Cloud Functions)
-- **Maps**: Google Maps JavaScript API (`@react-google-maps/api`)
-- **Styling**: Vanilla CSS (Premium Glassmorphism Design System)
-- **Visuals**: Lucide React & MDI
+
+| Category | Technology |
+|---|---|
+| **Framework** | React 18 (Vite 5) |
+| **Backend** | Firebase (Auth, Firestore, Cloud Functions v2) |
+| **Maps** | Google Maps JavaScript API (`@react-google-maps/api`) |
+| **AI** | Google Gemini (`@google/generative-ai`) |
+| **Icons** | Lucide React, Material Design Icons |
+| **Styling** | Vanilla CSS (Glassmorphism Design System) |
+| **Testing** | Vitest, React Testing Library |
+| **Deployment** | Google Cloud Build → Cloud Run (Dockerized Nginx) |
 
 ---
 
 ## 🏁 Getting Started
 1. Clone the repository.
 2. Setup `.env` with the following keys:
-   - Firebase API Keys (`VITE_FIREBASE_API_KEY`, etc.)
-   - `VITE_GEMINI_API_KEY` — Google Gemini AI
-   - `VITE_GOOGLE_MAPS_API_KEY` — Google Maps JavaScript API
+   ```
+   VITE_FIREBASE_API_KEY=your_key
+   VITE_FIREBASE_AUTH_DOMAIN=your_domain
+   VITE_FIREBASE_PROJECT_ID=your_project
+   VITE_FIREBASE_STORAGE_BUCKET=your_bucket
+   VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
+   VITE_FIREBASE_APP_ID=your_app_id
+   VITE_GEMINI_API_KEY=your_gemini_key
+   VITE_GOOGLE_MAPS_API_KEY=your_maps_key
+   ```
 3. Run `npm install` and `npm run dev`.
 4. Run `npx vitest run` to verify the **26-test stabilization suite**.
 
@@ -155,7 +205,24 @@ Zentry leverages the best of Google's cloud and AI technology:
 
 ---
 
+## 🚀 Deployment Pipeline
+
+```
+.env → deploy.sh → cloudbuild.yaml → Dockerfile → Cloud Run
+```
+
+| Step | Tool | Purpose |
+|---|---|---|
+| **1. Build** | Google Cloud Build | Docker image with Vite build (env vars injected as build args) |
+| **2. Registry** | Google Container Registry | `gcr.io/pw-2006/zentry` |
+| **3. Serve** | Google Cloud Run | Nginx serving static assets with auto-scaling |
+
+Deploy with: `sh deploy.sh`
+
+---
+
 ## 🌐 Live Deployment
 **Production URL**: [https://zentry-331594691149.us-central1.run.app](https://zentry-331594691149.us-central1.run.app)
 
 *Built for the future of live experiences.*
+
